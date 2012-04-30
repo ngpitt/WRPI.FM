@@ -70,6 +70,8 @@ function tokenize($string) {
 // Convert BB formatting to HTML formatting
 function bb2html($bb) {
     $html = "";
+    $code = false;
+    $list = false;
 
     // Create a mixed array of BB tags and content
     $tokens = tokenize($bb);
@@ -131,27 +133,31 @@ function bb2html($bb) {
                 $html .= "\" alt=\"\"/>";
                 break;
             case "quote":
-                $html .= "<blockquote><i>";
+                $html .= "<blockquote style=\"background-color: {$_SERVER["style"]["highlight_color"]}; font-style: italic; margin: auto; margin-top: 10px; margin-bottom: -10px; padding: 10px; width: 90%;\">";
                 break;
             case "/quote":
-                $html .= "</i></blockquote>";
+                $html .= "</blockquote>";
                 break;
             case "code":
-                $html .= "<blockquote><pre>";
+                $html .= "<blockquote style=\"background-color: {$_SERVER["style"]["highlight_color"]}; font-family: courier; margin: auto; margin-top: 10px; margin-bottom: -10px; padding: 10px; width: 90%;\">";
+                $code = true;
                 break;
             case "/code":
-                $html .= "</pre></blockquote>";
+                $html .= "</blockquote>";
+                $code = false;
                 break;
             case "size=":
-                $size = strstr($tokens[$i], "=");
+                $size = substr($tokens[$i], 1, -1);
+                $size = strstr($size, "=");
                 $size = substr($size, 1);
-                $html .= "<span style=\"font-size: {$size}px\">";
+                $html .= "<span style=\"font-size: {$size}em\">";
                 break;
             case "/size":
                 $html .= "</span>";
                 break;
             case "color=":
-                $color = strstr($tokens[$i], "=");
+                $color = substr($tokens[$i], 1, -1);
+                $color = strstr($color, "=");
                 $color = substr($color, 1);
                 $html .= "<span style=\"color: {$color}\">";
                 break;
@@ -159,23 +165,24 @@ function bb2html($bb) {
                 $html .= "</span>";
                 break;
             case "list":
-                $html .= "<ul>";
+                $html .= "<ul style=\"margin: 5px; margin-bottom: -10px;\">";
+                $list = true;
                 break;
             case "*":
-                $previous = substr($tokens[$i] - 1, 1, -1);
-                $html .= $previous === "list" ? "<li>" : "</li><li>";
+                $html .= $list ? "<li>" : "</li><li>";
+                $list = false;
                 break;
             case "/list":
-                $html .= "</li><ul>";
+                $html .= "</li></ul>";
                 break;
             case "table":
-                $html .= "<table>";
+                $html .= "<table style=\"border-collapse: collapse; margin: auto; margin-top: 10px; margin-bottom: -10px; width: 90%;\">";
                 break;
             case "tr":
                 $html .= "<tr>";
                 break;
             case "td":
-                $html .= "<td>";
+                $html .= "<td style=\"border: 1px solid #000000;\">";
                 break;
             case "/td":
                 $html .= "</td>";
@@ -187,12 +194,23 @@ function bb2html($bb) {
                 $html .= "</table>";
                 break;
             default:
+
+                // Retain formatting if within code tags
+                if ($code) {
+
+                    // Replace spaces with HTML codes
+                    $tokens[$i] = str_replace(" ", "&nbsp;", $tokens[$i]);
+                }
+
                 $html .= $tokens[$i];
         }
     }
 
     // Replace new lines with HTML break tags
-    $html = nl2br($html);
+    $html = str_replace("\n", "<br/>", $html);
+
+    // Add a break tag to the end of each post
+    $html .= "<br/>";
 
     return $html;
 }
@@ -498,7 +516,7 @@ if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content
     // Convert BB formatting to HTML formatting
     $row["content"] = bb2html($row["content"]);
 
-    $body = "<html>\r\n    <head>\r\n        <title>{$_SERVER["site"]["title"]} - {$_SERVER["site"]["description"]}</title>\r\n        <meta charset=\"utf-8\"/>\r\n        <meta name=\"author\" content=\"{$_SERVER["site"]["author"]}\"/>\r\n    </head>\r\n    <body style=\"background-color: {$_SERVER["style"]["background_color"]}; color: {$_SERVER["style"]["font_color"]}; font-family: Tahoma; font-size: 0.75em; padding-top: 20px; padding-bottom: 20px; text-align: center;\">\r\n        <div style=\"background-color: {$_SERVER["style"]["foreground_color"]}; margin: auto; width: 80%; text-align: left; word-wrap: break-word;\">\r\n            <div style=\"padding: 10px;\">\r\n                <div style=\"font-size: 1.2em; font-weight: bold;\">\r\n                    {$row["title"]}\r\n                </div>\r\n                <div>\r\n                    by <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$_SERVER["site"]["url"]}#about={$_SESSION["user_id"]}\">{$row["username"]}</a> on {$date}\r\n                </div>\r\n                <div style=\"margin-top: 10px;\">\r\n                    {$row["content"]}\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n";
+    $body = "<html>\r\n    <head>\r\n        <title>{$_SERVER["site"]["title"]} - {$_SERVER["site"]["description"]}</title>\r\n        <meta charset=\"utf-8\"/>\r\n        <meta name=\"author\" content=\"{$_SERVER["site"]["author"]}\"/>\r\n    </head>\r\n    <body style=\"background-color: {$_SERVER["style"]["background_color"]}; color: {$_SERVER["style"]["font_color"]}; font-family: tahoma; font-size: 0.75em; padding-top: 20px; padding-bottom: 20px; text-align: center;\">\r\n        <div style=\"background-color: {$_SERVER["style"]["foreground_color"]}; margin: auto; width: 80%; text-align: left; word-wrap: break-word;\">\r\n            <div style=\"padding: 10px;\">\r\n                <div style=\"font-size: 1.2em; font-weight: bold;\">\r\n                    {$row["title"]}\r\n                </div>\r\n                <div>\r\n                    by <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$_SERVER["site"]["url"]}#about={$_SESSION["user_id"]}\">{$row["username"]}</a> on {$date}\r\n                </div>\r\n                <div style=\"margin-top: 10px;\">\r\n                    {$row["content"]}\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n";
 
     // Loop through subscribed users
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE subscribe = 1");
@@ -526,7 +544,7 @@ if (isset($_GET["rss"])) {
 
     // Site feed
     if ($_GET["rss"] === "all") {
-        echo "        <title>", $_SERVER["site"]["title"], " - All</title>
+        echo "        <title>", $_SERVER["site"]["title"], " - All Posts</title>
         <description>Latest Posts @ ", $_SERVER["site"]["description"], "</description>
         <link>", $_SERVER["site"]["url"], "</link>
         <pubDate>", date("D, d M Y H:i:s T", $pub_date), "</pubDate>\n";
@@ -562,7 +580,7 @@ if (isset($_GET["rss"])) {
         $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["rss"]}'");
         $row = $result->fetch_assoc();
         if ($row) {
-            echo "        <title>", $_SERVER["site"]["title"], " - ", $row["username"], "</title>
+            echo "        <title>", $_SERVER["site"]["title"], " - Posts by ", $row["username"], "</title>
         <description>Latest Posts By ", $row["username"], " @ ", $_SERVER["site"]["description"], "</description>
         <link>", $_SERVER["site"]["url"], "</link>
         <pubDate>", date("D, d M Y H:i:s T", $pub_date), "</pubDate>\n";
@@ -678,7 +696,7 @@ if (isset($_POST["start_password_reset"]) && isset($_POST["email"])) {
     $headers = "From: {$_SERVER["site"]["title"]} <do-not-reply@{$_SERVER["site"]["domain"]}>\r\nMIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\n";
     $subject = "Password Reset Link";
     $url = "{$_SERVER["site"]["url"]}#finish_password_reset={$_SESSION["id"]}";
-    $body = "<html>\r\n    <head>\r\n        <title>{$_SERVER["site"]["title"]} - {$_SERVER["site"]["description"]}</title>\r\n        <meta charset=\"utf-8\"/>\r\n        <meta name=\"author\" content=\"{$_SERVER["site"]["author"]}\"/>\r\n    </head>\r\n    <body style=\"background-color: {$_SERVER["style"]["background_color"]}; color: {$_SERVER["style"]["font_color"]}; font-family: Tahoma; font-size: 0.75em; padding-top: 20px; padding-bottom: 20px; text-align: center;\">\r\n        <div style=\"background-color: {$_SERVER["style"]["foreground_color"]}; margin: auto; width: 80%; text-align: left; word-wrap: break-word;\">\r\n            <div style=\"padding: 10px;\">\r\n                <div style=\"font-size: 1.2em; font-weight: bold;\">\r\n                    Password Reset Link\r\n                </div>\r\n                <div>\r\n                    If you did not request this email, delete it immediately.\r\n                </div>\r\n                <div style=\"margin-top: 10px;\">\r\n                    Your password reset link: <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$url}\">{$url}</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n";
+    $body = "<html>\r\n    <head>\r\n        <title>{$_SERVER["site"]["title"]} - {$_SERVER["site"]["description"]}</title>\r\n        <meta charset=\"utf-8\"/>\r\n        <meta name=\"author\" content=\"{$_SERVER["site"]["author"]}\"/>\r\n    </head>\r\n    <body style=\"background-color: {$_SERVER["style"]["background_color"]}; color: {$_SERVER["style"]["font_color"]}; font-family: tahoma; font-size: 0.75em; padding-top: 20px; padding-bottom: 20px; text-align: center;\">\r\n        <div style=\"background-color: {$_SERVER["style"]["foreground_color"]}; margin: auto; width: 80%; text-align: left; word-wrap: break-word;\">\r\n            <div style=\"padding: 10px;\">\r\n                <div style=\"font-size: 1.2em; font-weight: bold;\">\r\n                    Password Reset Link\r\n                </div>\r\n                <div>\r\n                    If you did not request this email, delete it immediately.\r\n                </div>\r\n                <div style=\"margin-top: 10px;\">\r\n                    Your password reset link: <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$url}\">{$url}</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n";
 
     // Send the email
     mail($_POST["email"], $subject, $body, $headers);
@@ -725,7 +743,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
     $headers = "From: {$_SERVER["site"]["title"]} <do-not-reply@{$_SERVER["site"]["domain"]}>\r\nMIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\n";
     $subject = "Registration Link";
     $url = "{$_SERVER["site"]["url"]}#finish_registration={$_SESSION["id"]}";
-    $body = "<html>\r\n    <head>\r\n        <title>{$_SERVER["site"]["title"]} - {$_SERVER["site"]["description"]}</title>\r\n        <meta charset=\"utf-8\"/>\r\n        <meta name=\"author\" content=\"{$_SERVER["site"]["author"]}\"/>\r\n    </head>\r\n    <body style=\"background-color: {$_SERVER["style"]["background_color"]}; color: {$_SERVER["style"]["font_color"]}; font-family: Tahoma; font-size: 0.75em; padding-top: 20px; padding-bottom: 20px; text-align: center;\">\r\n        <div style=\"background-color: {$_SERVER["style"]["foreground_color"]}; margin: auto; width: 80%; text-align: left; word-wrap: break-word;\">\r\n            <div style=\"padding: 10px;\">\r\n                <div style=\"font-size: 1.2em; font-weight: bold;\">\r\n                    Registration Link\r\n                </div>\r\n                <div>\r\n                    If you did not request this email, delete it immediately.\r\n                </div>\r\n                <div style=\"margin-top: 10px;\">\r\n                    Your registration link: <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$url}\">{$url}</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n";
+    $body = "<html>\r\n    <head>\r\n        <title>{$_SERVER["site"]["title"]} - {$_SERVER["site"]["description"]}</title>\r\n        <meta charset=\"utf-8\"/>\r\n        <meta name=\"author\" content=\"{$_SERVER["site"]["author"]}\"/>\r\n    </head>\r\n    <body style=\"background-color: {$_SERVER["style"]["background_color"]}; color: {$_SERVER["style"]["font_color"]}; font-family: tahoma; font-size: 0.75em; padding-top: 20px; padding-bottom: 20px; text-align: center;\">\r\n        <div style=\"background-color: {$_SERVER["style"]["foreground_color"]}; margin: auto; width: 80%; text-align: left; word-wrap: break-word;\">\r\n            <div style=\"padding: 10px;\">\r\n                <div style=\"font-size: 1.2em; font-weight: bold;\">\r\n                    Registration Link\r\n                </div>\r\n                <div>\r\n                    If you did not request this email, delete it immediately.\r\n                </div>\r\n                <div style=\"margin-top: 10px;\">\r\n                    Your registration link: <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$url}\">{$url}</a>\r\n                </div>\r\n            </div>\r\n        </div>\r\n    </body>\r\n</html>\r\n";
 
     // Send the email
     mail($_POST["email"], $subject, $body, $headers);
@@ -1301,17 +1319,10 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                 padding-top: 20px;
                 padding-bottom: 20px;
             }
-            blockquote {
-                background-color: <?php echo $_SERVER["style"]["highlight_color"]; ?>;
-                padding-bottom: 1px;
-                padding-left: 10px;
-                padding-right: 10px;
-                padding-top: 1px;
-            }
             body {
                 background-color: <?php echo $_SERVER["style"]["button_background_color"]; ?>;
                 color: <?php echo $_SERVER["style"]["active_button_color"]; ?>;
-                font-family: Tahoma;
+                font-family: tahoma;
                 font-size: 0.75em;
                 line-height: 1.5em;
                 margin: 0px;
@@ -1357,6 +1368,10 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                 padding: 3px;
                 width: 680px;
             }
+            .highlight:hover {
+                background-color: <?php echo $_SERVER["style"]["highlight_color"]; ?>;
+                cursor: pointer;
+            }
             hr {
                 margin: 0px;
             }
@@ -1379,10 +1394,6 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                 font-size: 1.2em;
                 font-weight: bold;
             }
-            pre {
-                font-family: Courier;
-                line-height: 0.6em;
-            }
             table {
                 border-collapse: collapse;
                 width: 680px;
@@ -1390,12 +1401,8 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
             table td{
                 border-top: 1px solid #000000;
             }
-            table .row:hover {
-                background-color: <?php echo $_SERVER["style"]["highlight_color"]; ?>;
-                cursor: pointer;
-            }
             textarea {
-                font-family: Tahoma;
+                font-family: tahoma;
                 line-height: 1.5em;
                 resize: none;
                 width: 654px;
@@ -1412,9 +1419,6 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                 height: 100px;
                 margin: auto;
                 width: 680px;
-            }
-            #title td {
-                vertical-align: bottom;
             }
         </style>
     </head>
@@ -1453,7 +1457,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                         <?php echo $row["username"]; ?>
                                     </div>
                                     <div>
-                                        <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
+                                        <?php echo "<a href=\"/?rss=", $row["user_id"], "\">View RSS Feed</a>"; ?>
                                     </div>
                                     <div class="content">
                                         <?php echo bb2html($row["about"]); ?>
@@ -1503,7 +1507,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                     <th>Admin</th>
                                 </tr>
                                 <?php while ($row = $result->fetch_assoc()): ?>
-                                    <tr class="row" onClick="load('admin_account=<?php echo $row["user_id"]; ?>', '#page_without_menu', true);">
+                                    <tr class="highlight" onClick="load('admin_account=<?php echo $row["user_id"]; ?>', '#page_without_menu', true);">
                                         <td><?php echo $row["username"]; ?></td>
                                         <td><?php echo $row["email"]; ?></td>
                                         <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
