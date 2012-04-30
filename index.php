@@ -1457,7 +1457,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                         <?php echo $row["username"]; ?>
                                     </div>
                                     <div>
-                                        <?php echo "<a href=\"/?rss=", $row["user_id"], "\">View RSS Feed</a>"; ?>
+                                        <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
                                     </div>
                                     <div class="content">
                                         <?php echo bb2html($row["about"]); ?>
