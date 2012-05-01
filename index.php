@@ -285,7 +285,7 @@ $start_time = microtime(true);
 require_once "./config.php";
 
 // Get the site's domain
-$domain = null;
+$domain = array();
 preg_match("/[^.]+\.[^.]+$/", $_SERVER["HTTP_HOST"], $domain);
 $_SERVER["site"]["domain"] = $domain[0];
 
@@ -1613,7 +1613,8 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                             $search = isset($_GET["search"]) ? $_GET["search"] : "";
 
                             // If a page was specified, check it for validity with the search term
-                            $page = $result = null;
+                            $page = 1;
+                            $result = null;
                             if (isset($_GET["page"])) {
 
                                 // Load the specified page
