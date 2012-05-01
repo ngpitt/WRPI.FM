@@ -986,7 +986,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                 });
             }
             
-            // Load the requested url (the 2nd argument adds a fade in/fade out transition)
+            // Load the requested url (the 2nd argument specifies the element to be loaded)
             function load(url_argument, element) {
                 
                 // Update the url in the url bar
