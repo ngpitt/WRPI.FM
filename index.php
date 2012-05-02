@@ -249,15 +249,20 @@ function bb2html($bb) {
                 break;
             default:
 
-                // Retain formatting if within code tags
+                // Check if within code tags
                 if ($code) {
 
                     // Replace spaces with HTML space codes
                     $tokens[$i] = str_replace(" ", "&nbsp;", $tokens[$i]);
                 }
 
-                // Replace new lines with HTML break tags if not in a list or table
-                if (!$list && !$table) {
+                // Check if within list to table tags
+                if ($list && $table) {
+
+                    // Remove new lines
+                    $tokens[$i] = str_replace("\n", "", $tokens[$i]);
+                }
+                else {
 
                     // Replace new lines with HTML break tags
                     $tokens[$i] = str_replace("\n", "<br/>", $tokens[$i]);
@@ -1513,13 +1518,13 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
     </head>
     <body>
         <div id="title">
-            <div onClick="search = ''; page = 1; load('search=' + search + '&amp;page=' + page, '#page_without_menu', true); return false;"></div>
+            <div onClick="previous_search = ''; previous_page = 1; load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', true); return false;"></div>
         </div>
         <div id="page_with_menu">
             <div id="header">
                 <input class="textbox" name="search" type="text" maxlength="128" placeholder="Search" onKeyUp="Search(this.value);"/>
                 <?php if (isset($_SESSION["logged_in"])): ?>
-                    <a class="active_button" href="/" onClick="logout(); return false;">Logout</a><a class="active_button" href="/" onClick="search = ''; page = 1; load('new_post&amp;search=' + search + '&amp;page=' + page, '#page_without_menu', false); return false;">New Post</a>
+                    <a class="active_button" href="/" onClick="logout(); return false;">Logout</a><a class="active_button" href="/" onClick="previous_search = ''; previous_page = 1; load('new_post&amp;search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false); return false;">New Post</a>
                     <?php if ($_SESSION["admin"]): ?>
                         <a class="active_button" href="/" onClick="load('admin', '#page_without_menu', true); return false;">Admin</a>
                     <?php else: ?>
@@ -1553,7 +1558,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                     </div>
                                 </div>
                             <?php else: ?>
-                                <form class="auto_submit" action="/" onSubmit="load('search=' + search + '&amp;page=' + page, '#page_without_menu', false); return false;"></form>
+                                <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false); return false;"></form>
                                 <hr/>
                             <?php endif; ?>
                         </div>
@@ -1575,7 +1580,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                 <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
                                 Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/><br/>
                                 <textarea class="content" name="about" maxlength="1024" placeholder="About" rows="10"><?php echo $row["about"]; ?></textarea>
-                                <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#page_without_menu', true);"/> <input type="button" value="Delete" onClick="delete_account();"/>
+                                <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', true);"/> <input type="button" value="Delete" onClick="delete_account();"/>
                             </form>
                         </div>
                     </div>
@@ -1692,7 +1697,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                 <form action="/" onSubmit="new_post(this); return false;">
                                     <textarea class="title" name="title" maxlength="128" placeholder="Title" rows="1"></textarea><br/>
                                     <textarea class="content" name="content" maxlength="1024" placeholder="Content" rows="10"></textarea><br/>
-                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#page_without_menu', false);"/>
+                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false);"/>
                                 </form>
                                 <hr/>
                             <?php endif; ?>
@@ -1736,11 +1741,11 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                             <input name="post_id" type="hidden" value="<?php echo $_GET["edit_post"]; ?>"/>
                                             <textarea class="title" name="title" maxlength="128" placeholder="Title" rows="1"><?php echo $row["title"]; ?></textarea>
                                             <textarea class="content" name="content" maxlength="1024" placeholder="Content" rows="10"><?php echo $row["content"]; ?></textarea>
-                                            <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#page_without_menu', false);"/> <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
+                                            <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false);"/> <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
                                         </form>
                                     <?php else: ?>
                                         <div class="post">
-                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["edit_post"])) ? "onClick=\"load('edit_post={$row["post_id"]}&amp;search=' + search + '&amp;page=' + page, '#page_without_menu', false);\" style=\"cursor: pointer;\"" : ""; ?>>
+                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["edit_post"])) ? "onClick=\"load('edit_post={$row["post_id"]}&amp;search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false);\" style=\"cursor: pointer;\"" : ""; ?>>
                                                 <?php echo $row["title"]; ?>
                                             </div>
                                             <div>
