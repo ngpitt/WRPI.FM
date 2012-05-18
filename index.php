@@ -42,7 +42,7 @@ function tokenize($string) {
     // Loop through each character
     foreach ($array as $character) {
 
-        // Create a new token before open-brackets
+        // Create a new token before open brackets
         if ($character === "[") {
             array_push($tokens, $token);
             $token = "";
@@ -51,7 +51,7 @@ function tokenize($string) {
         // Add the character to the current token
         $token .= $character;
 
-        // Create a new token after close-brackets
+        // Create a new token after close brackets
         if ($character === "]") {
             array_push($tokens, $token);
             $token = "";
@@ -249,11 +249,11 @@ function bb2html($bb) {
                 // Check if within code tags
                 if ($code) {
 
-                    // Replace spaces with HTML space codes
+                    // Replace spaces with HTML spaces
                     $tokens[$i] = str_replace(" ", "&nbsp;", $tokens[$i]);
                 }
 
-                // Check if within list to table tags
+                // Check if within list or table tags
                 if ($list || $table) {
 
                     // Remove new lines
