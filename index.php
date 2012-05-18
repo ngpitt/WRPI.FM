@@ -3,17 +3,14 @@
 /*
   Copyright Xphysics 2012. All Rights Reserved.
 
-  WRPI.FM is free software: you can redistribute
-  it and/or modify it under the terms of the GNU
-  General Public License as published by the Free
-  Software Foundation, either version 3 of the
-  License, or (at your option) any later version.
+  WRPI.FM is free software: you can redistribute it and/or modify it under the
+  terms of the GNU General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option) any later
+  version.
 
-  WRPI.FM is distributed in the hope that it will
-  be useful, but WITHOUT ANY WARRANTY; without
-  even the implied warranty of MERCHANTABILITY or
-  FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  General Public License for more details.
+  WRPI.FM is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+  A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
   <http://www.gnu.org/licenses/>
  */
@@ -80,7 +77,7 @@ function bb2html($bb) {
     $tokens = tokenize($bb);
 
     // Loop through each token
-    for ($i = 0; $i < count($tokens); $i++) {
+    for ($i = 0; $i < count($tokens); ++$i) {
         $token = $tokens[$i];
 
         // Remove content after equal signs
@@ -257,7 +254,7 @@ function bb2html($bb) {
                 }
 
                 // Check if within list to table tags
-                if ($list && $table) {
+                if ($list || $table) {
 
                     // Remove new lines
                     $tokens[$i] = str_replace("\n", "", $tokens[$i]);
@@ -287,7 +284,7 @@ function bb2rss($bb) {
     $tokens = tokenize($bb);
 
     // Loop through each token
-    for ($i = 0; $i < count($tokens); $i++) {
+    for ($i = 0; $i < count($tokens); ++$i) {
         $token = $tokens[$i];
 
         // Remove content after equal signs
@@ -1735,7 +1732,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                     </div>
                                 </div>
                             <?php else: ?>
-                                <?php for ($i = 0; $row && $i < 10; $i++): ?>
+                                <?php for ($i = 0; $row && $i < 10; ++$i): ?>
                                     <?php if (isset($_GET["edit_post"]) && $_GET["edit_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
                                         <form action="/" onSubmit="save_post(this); return false;">
                                             <input name="post_id" type="hidden" value="<?php echo $_GET["edit_post"]; ?>"/>
@@ -1797,7 +1794,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                         }
 
                         ?>
-                        <?php for ($i = $page - $pages_before; $i <= $page + $pages_after; $i++): ?>
+                        <?php for ($i = $page - $pages_before; $i <= $page + $pages_after; ++$i): ?>
                             <?php if ($i == $page): ?>
                                 <span class="inactive_button"><?php echo $i; ?></span>
                             <?php else: ?>
