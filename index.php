@@ -429,10 +429,12 @@ if (isset($_POST["admin_save_account"]) && isset($_POST["user_id"]) && isset($_P
 
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_POST["username"]}'");
-    $row = $result->fetch_assoc();
-    if ($row && $row["user_id"] !== $_POST["user_id"]) {
-        echo 1;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row && $row["user_id"] !== $_POST["user_id"]) {
+            echo 1;
+            return;
+        }
     }
 
     // Check for invalid email address
@@ -443,10 +445,12 @@ if (isset($_POST["admin_save_account"]) && isset($_POST["user_id"]) && isset($_P
 
     // Check for email address in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    $row = $result->fetch_assoc();
-    if ($row && $row["user_id"] !== $_POST["user_id"]) {
-        echo 3;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row && $row["user_id"] !== $_POST["user_id"]) {
+            echo 3;
+            return;
+        }
     }
 
     // Update the account
@@ -487,10 +491,12 @@ if (isset($_POST["delete_post"]) && isset($_POST["post_id"]) && isset($_SESSION[
 
     // Check for valid permissions
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE post_id = '{$_POST["post_id"]}'");
-    $row = $result->fetch_assoc();
-    if ($row["user_id"] !== $_SESSION["user_id"] && !$_SESSION["admin"]) {
-        echo 1;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row["user_id"] !== $_SESSION["user_id"] && !$_SESSION["admin"]) {
+            echo 1;
+            return;
+        }
     }
 
     // Delete the post
@@ -536,18 +542,22 @@ if (isset($_POST["finish_registration"]) && isset($_POST["id"]) && isset($_SESSI
 
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_SESSION["username"]}'");
-    $row = $result->fetch_assoc();
-    if ($row) {
-        echo 2;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row) {
+            echo 2;
+            return;
+        }
     }
 
     // Check for email in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_SESSION["email"]}'");
-    $row = $result->fetch_assoc();
-    if ($row) {
-        echo 3;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row) {
+            echo 3;
+            return;
+        }
     }
 
     // Create the account
@@ -572,9 +582,15 @@ if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"]
 
     // Check the user's password hash
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    $row = $result->fetch_assoc();
-    $_POST["password"] = hash("sha256", $_POST["password"] . $row["user_id"]);
-    if ($_POST["password"] !== $row["password"]) {
+    if ($result) {
+        $row = $result->fetch_assoc();
+        $_POST["password"] = hash("sha256", $_POST["password"] . $row["user_id"]);
+        if ($_POST["password"] !== $row["password"]) {
+            echo 1;
+            return;
+        }
+    }
+    else {
         echo 1;
         return;
     }
@@ -622,10 +638,12 @@ if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content
 
     // Loop through subscribed users
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE subscribe = 1");
-    while ($row = $result->fetch_assoc()) {
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
 
-        // Send the email
-        mail($row["email"], $subject, $body, $headers);
+            // Send the email
+            mail($row["email"], $subject, $body, $headers);
+        }
     }
     echo 0;
     return;
@@ -646,46 +664,49 @@ if (isset($_GET["rss"])) {
 
     // Get the specified feed
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["rss"]}'");
-    $row = $result->fetch_assoc();
+    if ($result) {
+        $row = $result->fetch_assoc();
 
-    // Check of the feed is for a specific user
-    $user_specific = $row ? true : false;
+        // Check of the feed is for a specific user
+        $user_specific = $row ? true : false;
 
-    echo "        <title>", $_SERVER["site"]["title"], " - ", $user_specific ? "Posts by {$row["username"]}" : "All Posts", "</title>
+        echo "        <title>", $_SERVER["site"]["title"], " - ", $user_specific ? "Posts by {$row["username"]}" : "All Posts", "</title>
         <description>Latest Posts @ ", $_SERVER["site"]["description"], "</description>
         <link>", $_SERVER["site"]["url"], "</link>
         <pubDate>", date("D, d M Y H:i:s T", $pub_date), "</pubDate>\n";
 
-    // Load the most recent 10 posts
-    if ($user_specific) {
-        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE user_id = '{$_GET["rss"]}' ORDER BY date DESC LIMIT 10");
-    }
-    else {
-        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts ORDER BY date DESC LIMIT 10");
-    }
-    $row = $result->fetch_assoc();
-
-    // Get the last build date from the most recent post
-    if ($row) {
-        $last_build_date = strtotime($row["date"]);
-        if ($last_build_date < $pub_date) {
-            $last_build_date = $pub_date;
+        // Load the most recent 10 posts
+        if ($user_specific) {
+            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE user_id = '{$_GET["rss"]}' ORDER BY date DESC LIMIT 10");
         }
-    }
-    else {
-        $last_build_date = $pub_date;
-    }
+        else {
+            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts ORDER BY date DESC LIMIT 10");
+        }
 
-    echo "        <lastBuildDate>", date("D, d M Y H:i:s T", $last_build_date), "</lastBuildDate>
+        if ($result) {
+            $row = $result->fetch_assoc();
+
+            // Get the last build date from the most recent post
+            if ($row) {
+                $last_build_date = strtotime($row["date"]);
+                if ($last_build_date < $pub_date) {
+                    $last_build_date = $pub_date;
+                }
+            }
+            else {
+                $last_build_date = $pub_date;
+            }
+
+            echo "        <lastBuildDate>", date("D, d M Y H:i:s T", $last_build_date), "</lastBuildDate>
         <atom:link href=\"", $_SERVER["site"]["url"], "?rss", $user_specific ? "={$_GET["rss"]}" : "", "\" rel=\"self\" type=\"application/rss+xml\"/>";
 
-    // Loop through the most recent 10 posts
-    while ($row) {
+            // Loop through the most recent 10 posts
+            while ($row) {
 
-        // Remove BB formatting
-        $row["content"] = bb2rss($row["content"]);
+                // Remove BB formatting
+                $row["content"] = bb2rss($row["content"]);
 
-        echo "\n        <item>
+                echo "\n        <item>
             <title>", $row["title"], "</title>
             <description>", $row["content"], "</description>
             <link>", $_SERVER["site"]["url"], "#search=", $row["post_id"], "&amp;page=1</link>
@@ -693,9 +714,10 @@ if (isset($_GET["rss"])) {
             <pubDate>", date("D, d M Y H:i:s T", strtotime($row["date"])), "</pubDate>
         </item>";
 
-
-        $row = $result->fetch_assoc();
-    };
+                $row = $result->fetch_assoc();
+            };
+        }
+    }
     echo "\n    </channel>
 </rss>\n";
     return;
@@ -706,10 +728,12 @@ if (isset($_POST["save_account"]) && isset($_POST["username"]) && isset($_POST["
 
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_POST["username"]}'");
-    $row = $result->fetch_assoc();
-    if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
-        echo 1;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
+            echo 1;
+            return;
+        }
     }
 
     // Check for invalid email address
@@ -720,10 +744,12 @@ if (isset($_POST["save_account"]) && isset($_POST["username"]) && isset($_POST["
 
     // Check for email address in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    $row = $result->fetch_assoc();
-    if (!$row && $row["user_id"] !== $_SESSION["user_id"]) {
-        echo 3;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if (!$row && $row["user_id"] !== $_SESSION["user_id"]) {
+            echo 3;
+            return;
+        }
     }
 
     // Update the account
@@ -748,10 +774,12 @@ if (isset($_POST["save_post"]) && isset($_POST["post_id"]) && isset($_POST["titl
 
     // Check for valid permissions
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE post_id = '{$_POST["post_id"]}'");
-    $row = $result->fetch_assoc();
-    if ($row["user_id"] !== $_SESSION["user_id"] && !$_SESSION["admin"]) {
-        echo 1;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row["user_id"] !== $_SESSION["user_id"] && !$_SESSION["admin"]) {
+            echo 1;
+            return;
+        }
     }
 
     // Update the post
@@ -766,10 +794,12 @@ if (isset($_POST["start_password_reset"]) && isset($_POST["email"])) {
 
     // Check if the email address exists
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    $row = $result->fetch_assoc();
-    if (!$row) {
-        echo 1;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if (!$row) {
+            echo 1;
+            return;
+        }
     }
 
     // Set temporary session variables
@@ -795,10 +825,12 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_POST["username"]}'");
-    $row = $result->fetch_assoc();
-    if ($row) {
-        echo 1;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row) {
+            echo 1;
+            return;
+        }
     }
 
     // Check for invalid email address
@@ -809,10 +841,12 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 
     // Check for email address in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    $row = $result->fetch_assoc();
-    if ($row) {
-        echo 3;
-        return;
+    if ($result) {
+        $row = $result->fetch_assoc();
+        if ($row) {
+            echo 3;
+            return;
+        }
     }
 
     // Set temporary session variables
@@ -1539,24 +1573,26 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 
                             // Get the account
                             $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["about"]}'");
-                            $row = $result->fetch_assoc();
+                            if ($result):
+                                $row = $result->fetch_assoc();
 
-                            ?>
-                            <?php if ($row): ?>
-                                <div class="post">
-                                    <div class="title">
-                                        <?php echo $row["username"]; ?>
+                                ?>
+                                <?php if ($row): ?>
+                                    <div class="post">
+                                        <div class="title">
+                                            <?php echo $row["username"]; ?>
+                                        </div>
+                                        <div>
+                                            <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
+                                        </div>
+                                        <div class="content">
+                                            <?php echo bb2html($row["about"]); ?>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
-                                    </div>
-                                    <div class="content">
-                                        <?php echo bb2html($row["about"]); ?>
-                                    </div>
-                                </div>
-                            <?php else: ?>
-                                <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false); return false;"></form>
-                                <hr/>
+                                <?php else: ?>
+                                    <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false); return false;"></form>
+                                    <hr/>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1567,18 +1603,20 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 
                             // Get the account
                             $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_SESSION["user_id"]}'");
-                            $row = $result->fetch_assoc();
+                            if ($result):
+                                $row = $result->fetch_assoc();
 
-                            ?>
-                            <form action="/" onSubmit="save_account(this); return false;">
-                                <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
-                                <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
-                                <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
-                                Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/><br/>
-                                <textarea class="content" name="about" maxlength="1024" placeholder="About" rows="10"><?php echo $row["about"]; ?></textarea>
-                                <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', true);"/> <input type="button" value="Delete" onClick="delete_account();"/>
-                            </form>
+                                ?>
+                                <form action="/" onSubmit="save_account(this); return false;">
+                                    <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
+                                    <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
+                                    <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
+                                    <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
+                                    Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/><br/>
+                                    <textarea class="content" name="about" maxlength="1024" placeholder="About" rows="10"><?php echo $row["about"]; ?></textarea>
+                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', true);"/> <input type="button" value="Delete" onClick="delete_account();"/>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php elseif (isset($_GET["admin"]) && isset($_SESSION["logged_in"]) && $_SESSION["admin"]): ?>
@@ -1597,14 +1635,16 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                     <th>Subscribed</th>
                                     <th>Admin</th>
                                 </tr>
-                                <?php while ($row = $result->fetch_assoc()): ?>
-                                    <tr class="highlight" onClick="load('admin_account=<?php echo $row["user_id"]; ?>', '#page_without_menu', true);">
-                                        <td><?php echo $row["username"]; ?></td>
-                                        <td><?php echo $row["email"]; ?></td>
-                                        <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
-                                        <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
-                                    </tr>
-                                <?php endwhile; ?>
+                                <?php if ($result): ?>
+                                    <?php while ($row = $result->fetch_assoc()): ?>
+                                        <tr class="highlight" onClick="load('admin_account=<?php echo $row["user_id"]; ?>', '#page_without_menu', true);">
+                                            <td><?php echo $row["username"]; ?></td>
+                                            <td><?php echo $row["email"]; ?></td>
+                                            <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
+                                            <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php endif; ?>
                             </table>
                         </div>
                     </div>
@@ -1615,23 +1655,25 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 
                             // Get the account
                             $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["admin_account"]}'");
-                            $row = $result->fetch_assoc();
+                            if ($result):
+                                $row = $result->fetch_assoc();
 
-                            ?>
-                            <?php if ($row): ?>
-                                <form action="/" onSubmit="admin_save_account(this); return false;">
-                                    <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
-                                    <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
-                                    <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                    <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
-                                    <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
-                                    Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
-                                    Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/><br/>
-                                    <textarea class="content" name="about" maxlength="1024" placeholder="About" rows="10"><?php echo $row["about"]; ?></textarea>
-                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('admin', '#page_without_menu', true);"/> <input type="button" value="Delete" onClick="admin_delete_account('<?php echo $_GET["admin_account"]; ?>');"/>
-                                </form>
-                            <?php else: ?>
-                                <form class="auto_submit" action="/" onSubmit="load('admin', '#page_without_menu', false); return false;"></form>
+                                ?>
+                                <?php if ($row): ?>
+                                    <form action="/" onSubmit="admin_save_account(this); return false;">
+                                        <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
+                                        <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
+                                        <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
+                                        <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
+                                        <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
+                                        Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
+                                        Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/><br/>
+                                        <textarea class="content" name="about" maxlength="1024" placeholder="About" rows="10"><?php echo $row["about"]; ?></textarea>
+                                        <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('admin', '#page_without_menu', true);"/> <input type="button" value="Delete" onClick="admin_delete_account('<?php echo $_GET["admin_account"]; ?>');"/>
+                                    </form>
+                                <?php else: ?>
+                                    <form class="auto_submit" action="/" onSubmit="load('admin', '#page_without_menu', false); return false;"></form>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1715,55 +1757,65 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                             }
 
                             // Check if the query was valid/page was not specified
-                            if (!isset($_GET["page"]) || !$result->num_rows) {
+                            if ($result) {
+                                if (!isset($_GET["page"]) || !$result->num_rows) {
 
-                                // Load the first page
-                                $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
-                                $page = 1;
+                                    // Load the first page
+                                    $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
+                                    $page = 1;
+                                }
                             }
 
-                            $row = $result->fetch_assoc();
+                            if ($result):
+                                $row = $result->fetch_assoc();
 
-                            ?>
-                            <?php if (!$row): ?>
+                                ?>
+                                <?php if (!$row): ?>
+                                    <div class="post">
+                                        <div class="title">
+                                            No Posts
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <?php for ($i = 0; $row && $i < 10; ++$i): ?>
+                                        <?php if (isset($_GET["edit_post"]) && $_GET["edit_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
+                                            <form action="/" onSubmit="save_post(this); return false;">
+                                                <input name="post_id" type="hidden" value="<?php echo $_GET["edit_post"]; ?>"/>
+                                                <textarea class="title" name="title" maxlength="128" placeholder="Title" rows="1"><?php echo $row["title"]; ?></textarea>
+                                                <textarea class="content" name="content" maxlength="1024" placeholder="Content" rows="10"><?php echo $row["content"]; ?></textarea>
+                                                <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false);"/> <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
+                                            </form>
+                                        <?php else: ?>
+                                            <div class="post">
+                                                <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["edit_post"])) ? "onClick=\"load('edit_post={$row["post_id"]}&amp;search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false);\" style=\"cursor: pointer;\"" : ""; ?>>
+                                                    <?php echo $row["title"]; ?>
+                                                </div>
+                                                <div>
+                                                    <?php
+
+                                                    // Display the time posted
+                                                    $time = strtotime($row["date"]);
+                                                    echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#page_without_menu', true); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time);
+
+                                                    ?>
+                                                </div>
+                                                <div class="content">
+                                                    <?php echo bb2html($row["content"]); ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php $row = $result->fetch_assoc(); ?>
+                                        <?php if ($row && $i < 9): ?>
+                                            <hr/>
+                                        <?php endif; ?>
+                                    <?php endfor; ?>
+                                <?php endif; ?>
+                            <?php else: ?>
                                 <div class="post">
                                     <div class="title">
                                         No Posts
                                     </div>
                                 </div>
-                            <?php else: ?>
-                                <?php for ($i = 0; $row && $i < 10; ++$i): ?>
-                                    <?php if (isset($_GET["edit_post"]) && $_GET["edit_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
-                                        <form action="/" onSubmit="save_post(this); return false;">
-                                            <input name="post_id" type="hidden" value="<?php echo $_GET["edit_post"]; ?>"/>
-                                            <textarea class="title" name="title" maxlength="128" placeholder="Title" rows="1"><?php echo $row["title"]; ?></textarea>
-                                            <textarea class="content" name="content" maxlength="1024" placeholder="Content" rows="10"><?php echo $row["content"]; ?></textarea>
-                                            <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false);"/> <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
-                                        </form>
-                                    <?php else: ?>
-                                        <div class="post">
-                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["edit_post"])) ? "onClick=\"load('edit_post={$row["post_id"]}&amp;search=' + previous_search + '&amp;page=' + previous_page, '#page_without_menu', false);\" style=\"cursor: pointer;\"" : ""; ?>>
-                                                <?php echo $row["title"]; ?>
-                                            </div>
-                                            <div>
-                                                <?php
-
-                                                // Display the time posted
-                                                $time = strtotime($row["date"]);
-                                                echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#page_without_menu', true); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time);
-
-                                                ?>
-                                            </div>
-                                            <div class="content">
-                                                <?php echo bb2html($row["content"]); ?>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php $row = $result->fetch_assoc(); ?>
-                                    <?php if ($row && $i < 9): ?>
-                                        <hr/>
-                                    <?php endif; ?>
-                                <?php endfor; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -1777,7 +1829,15 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                         <?php
 
                         // Calculate which/how many page tabs to show (moving 5-tab frame of reference)
-                        $pages = ceil($result->num_rows / 10);
+                        if ($result) {
+                            $pages = ceil($result->num_rows / 10);
+                            if (!$pages) {
+                                $pages = 1;
+                            }
+                        }
+                        else {
+                            $pages = 1;
+                        }
                         $pages_before = 2;
                         $pages_after = 2;
 
