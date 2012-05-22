@@ -1610,7 +1610,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                 <form action="/" onSubmit="save_account(this); return false;">
                                     <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
                                     <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                    <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
+                                    <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
                                     <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
                                     Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/><br/>
                                     <textarea class="content" name="about" maxlength="1024" placeholder="About" rows="10"><?php echo $row["about"]; ?></textarea>
@@ -1664,7 +1664,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                         <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
                                         <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
                                         <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                        <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
+                                        <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
                                         <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
                                         Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
                                         Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/><br/>
@@ -1683,7 +1683,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                             <form action="/" onSubmit="finish_password_reset(this); return false;">
                                 <input name="id" type="hidden" value="<?php echo $_GET["finish_password_reset"]; ?>"/>
                                 <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
+                                <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
                                 <input type="submit" value="Reset"/>
                             </form>
                         </div>
@@ -1713,7 +1713,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                             <form action="/" onSubmit="start_registration(this); return false;">
                                 <input class="textbox" name="username" type="text" maxlength="32" placeholder="Username"/><br/>
                                 <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)"/><br/>
+                                <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
                                 <input class="textbox" name="email" type="email" maxlength="64" placeholder="Email"/><br/>
                                 Subscribe: <input name="subscribe" type="checkbox"/><br/>
                                 <input type="submit" value="Verify"/>
