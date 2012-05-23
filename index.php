@@ -895,15 +895,18 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                     
                     // Get the hash from the address bar
                     previous_hash = window.location.hash.substr(1);
+                    
+                    // Load the url
+                    load(previous_hash, "#page_without_menu");
                 }
                 else {
                     
                     // Get the default hash
                     previous_hash = "search=" + previous_search + "&page=" + previous_page;
+                    
+                    // Update the address bar
+                    window.location.hash = previous_hash;
                 }
-                
-                // Load the url
-                load(previous_hash, "#page_without_menu");
                 
                 // Check the URL bar every 1/10 of a second
                 setInterval(function () {
@@ -1111,7 +1114,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
             // Load the requested URL (the 2nd argument specifies the element to be loaded)
             function load(url_argument, element) {
                 
-                // Uupdate the address bar and the local hash
+                // Update the address bar and the local hash
                 window.location.hash = previous_hash = url_argument;
                 
                 // Convert invalid URL characters to hex values
@@ -1745,7 +1748,7 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                             // Initialize the search term
                             $search = isset($_GET["search"]) ? $_GET["search"] : "";
 
-                            // If a page was specified, check it for validity with the search term
+                            // Check if a page was specified
                             $page = 1;
                             $result = null;
                             if (isset($_GET["page"])) {
@@ -1754,16 +1757,22 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
                                 $page = ($_GET["page"] - 1) * 10;
                                 $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT {$page}, 50");
                                 $page = $_GET["page"];
-                            }
 
-                            // Check if the query was valid/page was not specified
-                            if ($result) {
-                                if (!isset($_GET["page"]) || !$result->num_rows) {
+                                // Check if the query was valid
+                                if ($result) {
+                                    if (!$result->num_rows) {
 
-                                    // Load the first page
-                                    $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
-                                    $page = 1;
+                                        // Load the first page
+                                        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
+                                        $page = 1;
+                                    }
                                 }
+                            }
+                            else {
+
+                                // Load the first page
+                                $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
+                                $page = 1;
                             }
 
                             if ($result):
