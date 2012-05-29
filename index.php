@@ -454,7 +454,7 @@ if (isset($_POST["admin_save_account"]) && isset($_POST["user_id"]) && isset($_P
     }
 
     // Update the account
-    $_SERVER["database"]["mysqli"]->query("UPDATE users SET username = '{$_POST["username"]}', email = '{$_POST["email"]}', subscribe = {$_POST["subscribe"]}, admin = {$_POST["admin"]}, about = '{$_POST["about"]}' WHERE user_id = '{$_POST["user_id"]}'");
+    $_SERVER["database"]["mysqli"]->query("UPDATE users SET username = '{$_POST["username"]}', email = '{$_POST["email"]}', about = '{$_POST["about"]}', admin = {$_POST["admin"]}, subscribe = {$_POST["subscribe"]} WHERE user_id = '{$_POST["user_id"]}'");
 
     // Update the password if specified
     if ($_POST["password"] !== "") {
@@ -561,7 +561,7 @@ if (isset($_POST["finish_registration"]) && isset($_POST["id"]) && isset($_SESSI
     }
 
     // Create the account
-    $_SERVER["database"]["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', subscribe = {$_SESSION["subscribe"]}, admin = {$_SESSION["admin"]}");
+    $_SERVER["database"]["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', admin = {$_SESSION["admin"]}, subscribe = {$_SESSION["subscribe"]}");
 
     // Remove temporary session variables
     unset($_SESSION["id"]);
@@ -753,7 +753,7 @@ if (isset($_POST["save_account"]) && isset($_POST["username"]) && isset($_POST["
     }
 
     // Update the account
-    $_SERVER["database"]["mysqli"]->query("UPDATE users SET username = '{$_POST["username"]}', email = '{$_POST["email"]}', subscribe = {$_POST["subscribe"]}, about = '{$_POST["about"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
+    $_SERVER["database"]["mysqli"]->query("UPDATE users SET username = '{$_POST["username"]}', email = '{$_POST["email"]}', about = '{$_POST["about"]}', subscribe = {$_POST["subscribe"]} WHERE user_id = '{$_SESSION["user_id"]}'");
 
     // Update the password if specified
     if ($_POST["password"] !== "") {
