@@ -19,7 +19,6 @@
 $_SERVER["site"] = array(
     "title"         => "WRPI.FM",
     "description"   => "WRPI Troy 91.5 fm",
-    "author"        => "Nicholas Pitt",
     "timezone"      => "America/New_York",
 );
 

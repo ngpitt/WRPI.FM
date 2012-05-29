@@ -876,7 +876,6 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 <html>
     <head>
         <title><?php echo $_SERVER["site"]["title"]; ?> - <?php echo $_SERVER["site"]["description"]; ?></title>
-        <meta name="author" content="<?php echo $_SERVER["site"]["author"]; ?>"/>
         <link rel="alternate" type="application/rss+xml" title="<?php echo $_SERVER["site"]["title"]; ?>" href="/?rss"/>
         <script type="text/javascript" src="jquery.js" defer></script>
         <script type="text/javascript">
