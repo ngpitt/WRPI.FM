@@ -643,7 +643,7 @@ if (isset($_GET["rss"])) {
     if ($result) {
         $row = $result->fetch_assoc();
 
-        // Check of the feed is for a specific user
+        // Check if the feed is for a specific user
         $user_specific = $row ? true : false;
 
         echo "        <title>", $_SERVER["site"]["title"], " - ", $user_specific ? "Posts by {$row["username"]}" : "All Posts", "</title>
