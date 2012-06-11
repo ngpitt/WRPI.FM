@@ -1062,6 +1062,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         
                         // Update the content of the hidden div
                         auto_size.text(this.value);
+                        auto_size.text(auto_size.text() + "\n");
                         
                         // Update the size of the text area
                         $(this).css("height", auto_size.height());
