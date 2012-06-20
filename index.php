@@ -1395,7 +1395,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     previous_hash = window.location.hash.substr(1);
                     
                     // Load the url
-                    load(previous_hash, "#content");
+                    load(previous_hash, "#page");
                 }
                 else {
                     
@@ -1416,7 +1416,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     if (new_hash !== previous_hash) {
                         
                         // Load the url
-                        load(new_hash, "#content");
+                        load(new_hash, "#page");
                     }
                 }, 100);
             }
