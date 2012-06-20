@@ -942,10 +942,10 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result){
                             case "0":
-                                load("admin", "#content");
+                                load("admin", "#foreground");
                                 break;
                             case "1":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#page");
                         }
                     });
                 }
@@ -968,7 +968,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                         }
                     });
                 }
@@ -1002,7 +1002,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#page");
                                 alert("Password reset successful.");
                         }
                     });
@@ -1023,16 +1023,16 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     // Process the returned value
                     switch(result){
                         case "0":
-                            load("search=" + previous_search + "&page=" + previous_page, "#content");
+                            load("search=" + previous_search + "&page=" + previous_page, "#page");
                             alert("Registration successful.");
                             break
                         case "2":
                             alert("Username in use.");
-                            load("start_registration", "#content");
+                            load("start_registration", "#foreground");
                             break;
                         case "3":
                             alert("Email address in use.");
-                            load("start_registration", "#content");
+                            load("start_registration", "#foreground");
                     }
                 });
             }
@@ -1058,7 +1058,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Create a new hidden div
                         var auto_size = $(document.createElement("div"));
                         auto_size.addClass("auto_size");
-                        $("#content").append(auto_size);
+                        $("#foreground").append(auto_size);
                         
                         // Update the content of the hidden div
                         auto_size.text(this.value);
@@ -1109,7 +1109,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#page");
                                 break;
                             case "1":
                                 alert("Invalid login.");
@@ -1131,7 +1131,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     // Process the returned value
                     switch(result) {
                         case "0":
-                            load("search=" + previous_search + "&page=" + previous_page, "#content");
+                            load("search=" + previous_search + "&page=" + previous_page, "#page");
                     }
                 });
             }
@@ -1158,7 +1158,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     }, function (result) {
                         switch(result){
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                         }
                     });
                 }
@@ -1174,7 +1174,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     previous_page = new_page;
                     
                     // Load the page;
-                    load("search=" + previous_search + "&page=" + previous_page, "#content");
+                    load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                 }
             }
             
@@ -1191,7 +1191,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     previous_page = 1;
                     
                     // Load the search
-                    load("search=" + previous_search + "&page=" + previous_page, "#content");
+                    load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                 }
             }
             
@@ -1216,7 +1216,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                                 alert("Verification email sent.");
                                 break;
                             case "1":
@@ -1269,7 +1269,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         switch(result) {
                             case "0":
                                 alert("Verification email sent.");
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                                 break;
                             case "1":
                                 alert("Username in use.");
@@ -1326,10 +1326,10 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the retured value
                         switch(result) {
                             case "0":
-                                load("admin", "#content");
+                                load("admin", "#foreground");
                                 break;
                             case "1":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                                 break;
                             case "2":
                                 alert("Username in use.");
@@ -1376,7 +1376,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#content");
+                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
                         }
                     });
                 }
@@ -1566,22 +1566,22 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
     </head>
     <body>
         <div id="title">
-            <div onClick="previous_search = ''; previous_page = 1; load('search=' + previous_search + '&amp;page=' + previous_page, '#content'); return false;"></div>
+            <div onClick="previous_search = ''; previous_page = 1; load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground'); return false;"></div>
         </div>
-        <div id="content">
+        <div id="page">
             <div id="header">
                 <input class="textbox" name="search" type="text" maxlength="128" placeholder="Search" onKeyUp="Search(this.value);"/>
                 <?php if (isset($_SESSION["logged_in"])): ?>
                     <a class="active_button" href="/" onClick="logout(); return false;">Logout</a>
-                    <a class="active_button" href="/" onClick="previous_search = ''; previous_page = 1; load('new_post&amp;search=' + previous_search + '&amp;page=' + previous_page, '#content', false); return false;">New Post</a>
+                    <a class="active_button" href="/" onClick="previous_search = ''; previous_page = 1; load('new_post&amp;search=' + previous_search + '&amp;page=' + previous_page, '#foreground', false); return false;">New Post</a>
                     <?php if ($_SESSION["admin"]): ?>
-                        <a class="active_button" href="/" onClick="load('admin', '#content'); return false;">Admin</a>
+                        <a class="active_button" href="/" onClick="load('admin', '#foreground'); return false;">Admin</a>
                     <?php else: ?>
-                        <a class="active_button" href="/" onClick="load('account=<?php echo $_SESSION["user_id"]; ?>', '#content'); return false;">Account</a>
+                        <a class="active_button" href="/" onClick="load('account=<?php echo $_SESSION["user_id"]; ?>', '#foreground'); return false;">Account</a>
                     <?php endif; ?>
                 <?php else: ?>
-                    <a class="active_button" href="/" onClick="load('login', '#content'); return false;">Login</a>
-                    <a class="active_button" href="/" onClick="load('start_registration', '#content'); return false;">Register</a>
+                    <a class="active_button" href="/" onClick="load('login', '#foreground'); return false;">Login</a>
+                    <a class="active_button" href="/" onClick="load('start_registration', '#foreground'); return false;">Register</a>
                 <?php endif; ?>
             </div>
             <div id="background">
@@ -1608,7 +1608,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                     </div>
                                 </div>
                             <?php else: ?>
-                                <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#content'); return false;"></form>
+                                <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground'); return false;"></form>
                             <?php endif; ?>
                         <?php endif; ?>
                     <?php elseif (isset($_GET["account"]) && isset($_SESSION["logged_in"])): ?>
@@ -1634,14 +1634,14 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                         <input name="admin" type="checkbox" style="display: none;"/>
                                     <?php endif; ?>
                                     <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
-                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#content');"/>
+                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
                                     <input type="button" value="Delete" onClick="delete_account(<?php echo $row["user_id"]; ?>);"/>
                                 </form>
                             <?php else: ?>
                                 <?php if ($_SESSION["admin"]): ?>
-                                    <form class="auto_submit" action="/" onSubmit="load('admin', '#content'); return false;"></form>
+                                    <form class="auto_submit" action="/" onSubmit="load('admin', '#foreground'); return false;"></form>
                                 <?php else: ?>
-                                    <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#content'); return false;"></form>
+                                    <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground'); return false;"></form>
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php endif; ?>
@@ -1661,7 +1661,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             </tr>
                             <?php if ($result): ?>
                                 <?php while ($row = $result->fetch_assoc()): ?>
-                                    <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#content');">
+                                    <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#foreground');">
                                         <td><?php echo $row["username"]; ?></td>
                                         <td><?php echo $row["email"]; ?></td>
                                         <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
@@ -1686,7 +1686,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             <input class="textbox" name="email" type="text" maxlength="64" placeholder="Email"/><br/>
                             <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
                             <input type="submit" value="Login"/><br/>
-                            <a href="/" onClick="load('start_password_reset', '#content'); return false;">Reset Your Password</a>
+                            <a href="/" onClick="load('start_password_reset', '#foreground'); return false;">Reset Your Password</a>
                         </form>
                     <?php elseif (isset($_GET["start_registration"])): ?>
                         <form action="/" onSubmit="start_registration(this); return false;">
@@ -1707,11 +1707,11 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             <form action="/" onSubmit="new_post(this); return false;">
                                 <input class="title" name="title" type="text" maxlength="128" placeholder="Title"><br/>
                                 <div style="text-align: left">
-                                    by <a href="/" onClick="load('about=<?php echo $_SESSION["user_id"]; ?>', '#content'); return false;"><?php echo $_SESSION["username"]; ?></a> on <?php echo date("F jS, Y"), " @ ", date("g:i A"); ?><br/>
+                                    by <a href="/" onClick="load('about=<?php echo $_SESSION["user_id"]; ?>', '#foreground'); return false;"><?php echo $_SESSION["username"]; ?></a> on <?php echo date("F jS, Y"), " @ ", date("g:i A"); ?><br/>
                                 </div>
                                 <textarea class="content" name="content" maxlength="1024" placeholder="Content"></textarea><br/>
                                 <input type="submit" value="Save"/>
-                                <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#content');"/>
+                                <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
                             </form>
                             <hr/>
                         <?php endif; ?>
@@ -1765,22 +1765,22 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                             <input name="post_id" type="hidden" value="<?php echo $_GET["update_post"]; ?>"/>
                                             <input class="title" name="title" type="text" maxlength="128" value="<?php echo $row["title"]; ?>" placeholder="Title"><br/>
                                             <div style="text-align: left">
-                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS, Y", $time), " @ ", date("g:i A", $time); ?><br/>
+                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#foreground'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS, Y", $time), " @ ", date("g:i A", $time); ?><br/>
                                             </div>
                                             <textarea class="content" name="content" maxlength="1024" placeholder="Content"><?php echo $row["content"]; ?></textarea>
-                                            <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#content');"/>
+                                            <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
                                             <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
                                         </form>
                                     <?php else: ?>
                                         <div class="post">
-                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["update_post"])) ? "onClick=\"load('update_post={$row["post_id"]}&amp;search=' + previous_search + '&amp;page=' + previous_page, '#content');\" style=\"cursor: pointer;\"" : ""; ?>>
+                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["update_post"])) ? "onClick=\"load('update_post={$row["post_id"]}&amp;search=' + previous_search + '&amp;page=' + previous_page, '#foreground');\" style=\"cursor: pointer;\"" : ""; ?>>
                                                 <?php echo $row["title"]; ?>
                                             </div>
                                             <div>
                                                 <?php
 
                                                 // Display the time posted
-                                                echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time);
+                                                echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#foreground'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time);
 
                                                 ?>
                                             </div>
