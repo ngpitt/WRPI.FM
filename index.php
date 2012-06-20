@@ -942,10 +942,10 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result){
                             case "0":
-                                load("admin", "#foreground");
+                                load("admin", "#content");
                                 break;
                             case "1":
-                                load("search=" + previous_search + "&page=" + previous_page, "#page");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                         }
                     });
                 }
@@ -968,7 +968,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                         }
                     });
                 }
@@ -1002,7 +1002,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#page");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                                 alert("Password reset successful.");
                         }
                     });
@@ -1023,16 +1023,16 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     // Process the returned value
                     switch(result){
                         case "0":
-                            load("search=" + previous_search + "&page=" + previous_page, "#page");
+                            load("search=" + previous_search + "&page=" + previous_page, "#content");
                             alert("Registration successful.");
                             break
                         case "2":
                             alert("Username in use.");
-                            load("start_registration", "#foreground");
+                            load("start_registration", "#content");
                             break;
                         case "3":
                             alert("Email address in use.");
-                            load("start_registration", "#foreground");
+                            load("start_registration", "#content");
                     }
                 });
             }
@@ -1058,7 +1058,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Create a new hidden div
                         var auto_size = $(document.createElement("div"));
                         auto_size.addClass("auto_size");
-                        $("#foreground").append(auto_size);
+                        $("#content").append(auto_size);
                         
                         // Update the content of the hidden div
                         auto_size.text(this.value);
@@ -1109,7 +1109,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#page");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                                 break;
                             case "1":
                                 alert("Invalid login.");
@@ -1131,7 +1131,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     // Process the returned value
                     switch(result) {
                         case "0":
-                            load("search=" + previous_search + "&page=" + previous_page, "#page");
+                            load("search=" + previous_search + "&page=" + previous_page, "#content");
                     }
                 });
             }
@@ -1158,7 +1158,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     }, function (result) {
                         switch(result){
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                         }
                     });
                 }
@@ -1174,7 +1174,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     previous_page = new_page;
                     
                     // Load the page;
-                    load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                    load("search=" + previous_search + "&page=" + previous_page, "#content");
                 }
             }
             
@@ -1191,7 +1191,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     previous_page = 1;
                     
                     // Load the search
-                    load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                    load("search=" + previous_search + "&page=" + previous_page, "#search");
                 }
             }
             
@@ -1216,7 +1216,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                                 alert("Verification email sent.");
                                 break;
                             case "1":
@@ -1269,7 +1269,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         switch(result) {
                             case "0":
                                 alert("Verification email sent.");
-                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                                 break;
                             case "1":
                                 alert("Username in use.");
@@ -1326,10 +1326,10 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the retured value
                         switch(result) {
                             case "0":
-                                load("admin", "#foreground");
+                                load("admin", "#content");
                                 break;
                             case "1":
-                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                                 break;
                             case "2":
                                 alert("Username in use.");
@@ -1376,7 +1376,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result) {
                             case "0":
-                                load("search=" + previous_search + "&page=" + previous_page, "#foreground");
+                                load("search=" + previous_search + "&page=" + previous_page, "#content");
                         }
                     });
                 }
@@ -1395,7 +1395,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     previous_hash = window.location.hash.substr(1);
                     
                     // Load the url
-                    load(previous_hash, "#page");
+                    load(previous_hash, "#content");
                 }
                 else {
                     
@@ -1416,7 +1416,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     if (new_hash !== previous_hash) {
                         
                         // Load the url
-                        load(new_hash, "#page");
+                        load(new_hash, "#content");
                     }
                 }, 100);
             }
@@ -1568,7 +1568,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
         <div id="title">
             <div onClick="previous_search = ''; previous_page = 1; load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground'); return false;"></div>
         </div>
-        <div id="page">
+        <div id="content">
             <div id="header">
                 <input class="textbox" name="search" type="text" maxlength="128" placeholder="Search" onKeyUp="Search(this.value);"/>
                 <?php if (isset($_SESSION["logged_in"])): ?>
@@ -1584,280 +1584,282 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     <a class="active_button" href="/" onClick="load('start_registration', '#foreground'); return false;">Register</a>
                 <?php endif; ?>
             </div>
-            <div id="background">
-                <div id="foreground">
-                    <?php if (isset($_GET["about"])): ?>
-                        <?php
+            <div id="search">
+                <div id="background">
+                    <div id="foreground">
+                        <?php if (isset($_GET["about"])): ?>
+                            <?php
 
-                        // Get the account
-                        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["about"]}'");
-                        if ($result):
-                            $row = $result->fetch_assoc();
+                            // Get the account
+                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["about"]}'");
+                            if ($result):
+                                $row = $result->fetch_assoc();
 
-                            ?>
-                            <?php if ($row): ?>
-                                <div class="post">
-                                    <div class="title">
-                                        <?php echo $row["username"]; ?>
+                                ?>
+                                <?php if ($row): ?>
+                                    <div class="post">
+                                        <div class="title">
+                                            <?php echo $row["username"]; ?>
+                                        </div>
+                                        <div>
+                                            <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
+                                        </div>
+                                        <div class="content">
+                                            <?php echo bb2html($row["about"]); ?>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
-                                    </div>
-                                    <div class="content">
-                                        <?php echo bb2html($row["about"]); ?>
-                                    </div>
-                                </div>
-                            <?php else: ?>
-                                <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground'); return false;"></form>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    <?php elseif (isset($_GET["account"]) && isset($_SESSION["logged_in"])): ?>
-                        <?php
-
-                        // Get the account
-                        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["account"]}'");
-                        if ($result):
-                            $row = $result->fetch_assoc();
-
-                            ?>
-                            <?php if ($row): ?>
-                                <form action="/" onSubmit="update_account(this); return false;">
-                                    <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
-                                    <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
-                                    <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
-                                    <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                    <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
-                                    Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
-                                    <?php if ($row["user_id"] !== $_SESSION["user_id"] && $_SESSION["admin"]): ?>
-                                        Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/>
-                                    <?php else: ?>
-                                        <input name="admin" type="checkbox" style="display: none;"/>
-                                    <?php endif; ?>
-                                    <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
-                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
-                                    <input type="button" value="Delete" onClick="delete_account(<?php echo $row["user_id"]; ?>);"/>
-                                </form>
-                            <?php else: ?>
-                                <?php if ($_SESSION["admin"]): ?>
-                                    <form class="auto_submit" action="/" onSubmit="load('admin', '#foreground'); return false;"></form>
                                 <?php else: ?>
                                     <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground'); return false;"></form>
                                 <?php endif; ?>
                             <?php endif; ?>
-                        <?php endif; ?>
-                    <?php elseif (isset($_GET["admin"]) && isset($_SESSION["logged_in"]) && $_SESSION["admin"]): ?>
-                        <?php
+                        <?php elseif (isset($_GET["account"]) && isset($_SESSION["logged_in"])): ?>
+                            <?php
 
-                        // Get all accounts
-                        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users");
+                            // Get the account
+                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["account"]}'");
+                            if ($result):
+                                $row = $result->fetch_assoc();
 
-                        ?>
-                        <table>
-                            <tr>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Subscribed</th>
-                                <th>Admin</th>
-                            </tr>
-                            <?php if ($result): ?>
-                                <?php while ($row = $result->fetch_assoc()): ?>
-                                    <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#foreground');">
-                                        <td><?php echo $row["username"]; ?></td>
-                                        <td><?php echo $row["email"]; ?></td>
-                                        <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
-                                        <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
-                                    </tr>
-                                <?php endwhile; ?>
+                                ?>
+                                <?php if ($row): ?>
+                                    <form action="/" onSubmit="update_account(this); return false;">
+                                        <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
+                                        <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
+                                        <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
+                                        <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
+                                        <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
+                                        Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
+                                        <?php if ($row["user_id"] !== $_SESSION["user_id"] && $_SESSION["admin"]): ?>
+                                            Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/>
+                                        <?php else: ?>
+                                            <input name="admin" type="checkbox" style="display: none;"/>
+                                        <?php endif; ?>
+                                        <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
+                                        <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
+                                        <input type="button" value="Delete" onClick="delete_account(<?php echo $row["user_id"]; ?>);"/>
+                                    </form>
+                                <?php else: ?>
+                                    <?php if ($_SESSION["admin"]): ?>
+                                        <form class="auto_submit" action="/" onSubmit="load('admin', '#foreground'); return false;"></form>
+                                    <?php else: ?>
+                                        <form class="auto_submit" action="/" onSubmit="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground'); return false;"></form>
+                                    <?php endif; ?>
+                                <?php endif; ?>
                             <?php endif; ?>
-                        </table>
-                    <?php elseif (isset($_GET["finish_password_reset"]) && isset($_SESSION["id"]) && isset($_SESSION["user_id"]) && isset($_SESSION["admin"]) && $_GET["finish_password_reset"] === $_SESSION["id"]): ?>
-                        <form action="/" onSubmit="finish_password_reset(this); return false;">
-                            <input name="id" type="hidden" value="<?php echo $_GET["finish_password_reset"]; ?>"/>
-                            <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                            <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
-                            <input type="submit" value="Reset"/>
-                        </form>
-                    <?php elseif (isset($_GET["finish_registration"]) && isset($_SESSION["id"]) && isset($_SESSION["user_id"]) && isset($_SESSION["username"]) && isset($_SESSION["password"]) && isset($_SESSION["email"]) && isset($_SESSION["subscribe"]) && isset($_SESSION["admin"]) && $_GET["finish_registration"] === $_SESSION["id"]): ?>
-                        <form class="auto_submit" action="/" onSubmit="finish_registration(this); return false;">
-                            <input name="id" type="hidden" value="<?php echo $_GET["finish_registration"]; ?>"/>
-                        </form>
-                    <?php elseif (isset($_GET["login"])): ?>   
-                        <form action="/" onSubmit="login(this); return false;">
-                            <input class="textbox" name="email" type="text" maxlength="64" placeholder="Email"/><br/>
-                            <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                            <input type="submit" value="Login"/><br/>
-                            <a href="/" onClick="load('start_password_reset', '#foreground'); return false;">Reset Your Password</a>
-                        </form>
-                    <?php elseif (isset($_GET["start_registration"])): ?>
-                        <form action="/" onSubmit="start_registration(this); return false;">
-                            <input class="textbox" name="username" type="text" maxlength="32" placeholder="Username"/><br/>
-                            <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                            <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
-                            <input class="textbox" name="email" type="email" maxlength="64" placeholder="Email"/><br/>
-                            Subscribe: <input name="subscribe" type="checkbox"/><br/>
-                            <input type="submit" value="Verify"/>
-                        </form>
-                    <?php elseif (isset($_GET["start_password_reset"])): ?>
-                        <form action="/" onSubmit="start_password_reset(this); return false;">
-                            <input class="textbox" name="email" type="email" maxlength="64" placeholder="Email"/><br/>
-                            <input type="submit" value="Verify"/>
-                        </form>
-                    <?php else: ?>
-                        <?php if (isset($_GET["new_post"]) && isset($_SESSION["logged_in"])): ?>
-                            <form action="/" onSubmit="new_post(this); return false;">
-                                <input class="title" name="title" type="text" maxlength="128" placeholder="Title"><br/>
-                                <div style="text-align: left">
-                                    by <a href="/" onClick="load('about=<?php echo $_SESSION["user_id"]; ?>', '#foreground'); return false;"><?php echo $_SESSION["username"]; ?></a> on <?php echo date("F jS, Y"), " @ ", date("g:i A"); ?><br/>
-                                </div>
-                                <textarea class="content" name="content" maxlength="1024" placeholder="Content"></textarea><br/>
-                                <input type="submit" value="Save"/>
-                                <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
-                            </form>
-                            <hr/>
-                        <?php endif; ?>
-                        <?php
+                        <?php elseif (isset($_GET["admin"]) && isset($_SESSION["logged_in"]) && $_SESSION["admin"]): ?>
+                            <?php
 
-                        // Initialize the search term
-                        $search = isset($_GET["search"]) ? $_GET["search"] : "";
-
-                        // Check if a page was specified
-                        $page = 1;
-                        $result = null;
-                        if (isset($_GET["page"])) {
-
-                            // Load the specified page
-                            $page = ($_GET["page"] - 1) * 5;
-                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT {$page}, 50");
-                            $page = $_GET["page"];
-
-                            // Check if the query was valid
-                            if ($result) {
-                                if (!$result->num_rows) {
-
-                                    // Load the first page
-                                    $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
-                                    $page = 1;
-                                }
-                            }
-                        }
-                        else {
-
-                            // Load the first page
-                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
-                            $page = 1;
-                        }
-
-                        if ($result):
-                            $row = $result->fetch_assoc();
+                            // Get all accounts
+                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users");
 
                             ?>
-                            <?php if (!$row): ?>
+                            <table>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Subscribed</th>
+                                    <th>Admin</th>
+                                </tr>
+                                <?php if ($result): ?>
+                                    <?php while ($row = $result->fetch_assoc()): ?>
+                                        <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#foreground');">
+                                            <td><?php echo $row["username"]; ?></td>
+                                            <td><?php echo $row["email"]; ?></td>
+                                            <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
+                                            <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
+                                        </tr>
+                                    <?php endwhile; ?>
+                                <?php endif; ?>
+                            </table>
+                        <?php elseif (isset($_GET["finish_password_reset"]) && isset($_SESSION["id"]) && isset($_SESSION["user_id"]) && isset($_SESSION["admin"]) && $_GET["finish_password_reset"] === $_SESSION["id"]): ?>
+                            <form action="/" onSubmit="finish_password_reset(this); return false;">
+                                <input name="id" type="hidden" value="<?php echo $_GET["finish_password_reset"]; ?>"/>
+                                <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
+                                <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
+                                <input type="submit" value="Reset"/>
+                            </form>
+                        <?php elseif (isset($_GET["finish_registration"]) && isset($_SESSION["id"]) && isset($_SESSION["user_id"]) && isset($_SESSION["username"]) && isset($_SESSION["password"]) && isset($_SESSION["email"]) && isset($_SESSION["subscribe"]) && isset($_SESSION["admin"]) && $_GET["finish_registration"] === $_SESSION["id"]): ?>
+                            <form class="auto_submit" action="/" onSubmit="finish_registration(this); return false;">
+                                <input name="id" type="hidden" value="<?php echo $_GET["finish_registration"]; ?>"/>
+                            </form>
+                        <?php elseif (isset($_GET["login"])): ?>   
+                            <form action="/" onSubmit="login(this); return false;">
+                                <input class="textbox" name="email" type="text" maxlength="64" placeholder="Email"/><br/>
+                                <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
+                                <input type="submit" value="Login"/><br/>
+                                <a href="/" onClick="load('start_password_reset', '#foreground'); return false;">Reset Your Password</a>
+                            </form>
+                        <?php elseif (isset($_GET["start_registration"])): ?>
+                            <form action="/" onSubmit="start_registration(this); return false;">
+                                <input class="textbox" name="username" type="text" maxlength="32" placeholder="Username"/><br/>
+                                <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
+                                <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
+                                <input class="textbox" name="email" type="email" maxlength="64" placeholder="Email"/><br/>
+                                Subscribe: <input name="subscribe" type="checkbox"/><br/>
+                                <input type="submit" value="Verify"/>
+                            </form>
+                        <?php elseif (isset($_GET["start_password_reset"])): ?>
+                            <form action="/" onSubmit="start_password_reset(this); return false;">
+                                <input class="textbox" name="email" type="email" maxlength="64" placeholder="Email"/><br/>
+                                <input type="submit" value="Verify"/>
+                            </form>
+                        <?php else: ?>
+                            <?php if (isset($_GET["new_post"]) && isset($_SESSION["logged_in"])): ?>
+                                <form action="/" onSubmit="new_post(this); return false;">
+                                    <input class="title" name="title" type="text" maxlength="128" placeholder="Title"><br/>
+                                    <div style="text-align: left">
+                                        by <a href="/" onClick="load('about=<?php echo $_SESSION["user_id"]; ?>', '#foreground'); return false;"><?php echo $_SESSION["username"]; ?></a> on <?php echo date("F jS, Y"), " @ ", date("g:i A"); ?><br/>
+                                    </div>
+                                    <textarea class="content" name="content" maxlength="1024" placeholder="Content"></textarea><br/>
+                                    <input type="submit" value="Save"/>
+                                    <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
+                                </form>
+                                <hr/>
+                            <?php endif; ?>
+                            <?php
+
+                            // Initialize the search term
+                            $search = isset($_GET["search"]) ? $_GET["search"] : "";
+
+                            // Check if a page was specified
+                            $page = 1;
+                            $result = null;
+                            if (isset($_GET["page"])) {
+
+                                // Load the specified page
+                                $page = ($_GET["page"] - 1) * 5;
+                                $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT {$page}, 50");
+                                $page = $_GET["page"];
+
+                                // Check if the query was valid
+                                if ($result) {
+                                    if (!$result->num_rows) {
+
+                                        // Load the first page
+                                        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
+                                        $page = 1;
+                                    }
+                                }
+                            }
+                            else {
+
+                                // Load the first page
+                                $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT 0, 50");
+                                $page = 1;
+                            }
+
+                            if ($result):
+                                $row = $result->fetch_assoc();
+
+                                ?>
+                                <?php if (!$row): ?>
+                                    <div class="post">
+                                        <div class="title">
+                                            No Posts
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <?php for ($i = 0; $row && $i < 5; ++$i): ?>
+                                        <?php $time = strtotime($row["date"]); ?>
+                                        <?php if (isset($_GET["update_post"]) && $_GET["update_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
+                                            <form action="/" onSubmit="update_post(this); return false;">
+                                                <input name="post_id" type="hidden" value="<?php echo $_GET["update_post"]; ?>"/>
+                                                <input class="title" name="title" type="text" maxlength="128" value="<?php echo $row["title"]; ?>" placeholder="Title"><br/>
+                                                <div style="text-align: left">
+                                                    by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#foreground'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS, Y", $time), " @ ", date("g:i A", $time); ?><br/>
+                                                </div>
+                                                <textarea class="content" name="content" maxlength="1024" placeholder="Content"><?php echo $row["content"]; ?></textarea>
+                                                <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
+                                                <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
+                                            </form>
+                                        <?php else: ?>
+                                            <div class="post">
+                                                <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["update_post"])) ? "onClick=\"load('update_post={$row["post_id"]}&amp;search=' + previous_search + '&amp;page=' + previous_page, '#foreground');\" style=\"cursor: pointer;\"" : ""; ?>>
+                                                    <?php echo $row["title"]; ?>
+                                                </div>
+                                                <div>
+                                                    <?php
+
+                                                    // Display the time posted
+                                                    echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#foreground'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time);
+
+                                                    ?>
+                                                </div>
+                                                <div class="content">
+                                                    <?php echo bb2html($row["content"]); ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                        <?php $row = $result->fetch_assoc(); ?>
+                                        <?php if ($row && $i < 9): ?>
+                                            <hr/>
+                                        <?php endif; ?>
+                                    <?php endfor; ?>
+                                <?php endif; ?>
+                            <?php else: ?>
                                 <div class="post">
                                     <div class="title">
                                         No Posts
                                     </div>
                                 </div>
-                            <?php else: ?>
-                                <?php for ($i = 0; $row && $i < 5; ++$i): ?>
-                                    <?php $time = strtotime($row["date"]); ?>
-                                    <?php if (isset($_GET["update_post"]) && $_GET["update_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
-                                        <form action="/" onSubmit="update_post(this); return false;">
-                                            <input name="post_id" type="hidden" value="<?php echo $_GET["update_post"]; ?>"/>
-                                            <input class="title" name="title" type="text" maxlength="128" value="<?php echo $row["title"]; ?>" placeholder="Title"><br/>
-                                            <div style="text-align: left">
-                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#foreground'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS, Y", $time), " @ ", date("g:i A", $time); ?><br/>
-                                            </div>
-                                            <textarea class="content" name="content" maxlength="1024" placeholder="Content"><?php echo $row["content"]; ?></textarea>
-                                            <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + previous_search + '&amp;page=' + previous_page, '#foreground');"/>
-                                            <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
-                                        </form>
-                                    <?php else: ?>
-                                        <div class="post">
-                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["update_post"])) ? "onClick=\"load('update_post={$row["post_id"]}&amp;search=' + previous_search + '&amp;page=' + previous_page, '#foreground');\" style=\"cursor: pointer;\"" : ""; ?>>
-                                                <?php echo $row["title"]; ?>
-                                            </div>
-                                            <div>
-                                                <?php
-
-                                                // Display the time posted
-                                                echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#foreground'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time);
-
-                                                ?>
-                                            </div>
-                                            <div class="content">
-                                                <?php echo bb2html($row["content"]); ?>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php $row = $result->fetch_assoc(); ?>
-                                    <?php if ($row && $i < 9): ?>
-                                        <hr/>
-                                    <?php endif; ?>
-                                <?php endfor; ?>
                             <?php endif; ?>
-                        <?php else: ?>
-                            <div class="post">
-                                <div class="title">
-                                    No Posts
-                                </div>
-                            </div>
                         <?php endif; ?>
-                    <?php endif; ?>
+                    </div>
                 </div>
-            </div>
-            <div id="footer">
-                <?php if ($page > 1): ?>
-                    <a class="active_button" href="/" onClick="page(<?php echo ($page - 1); ?>); return false;">Newer</a>
-                <?php else: ?>
-                    <span class="inactive_button">Newer</span>
-                <?php endif; ?>
-                |
-                <?php
-
-                // Calculate which/how many page tabs to show (moving 5-tab frame of reference)
-                if ($result) {
-                    $pages = ceil($result->num_rows / 5);
-                    if (!$pages) {
-                        $pages = 1;
-                    }
-                }
-                else {
-                    $pages = 1;
-                }
-                $pages_before = 2;
-                $pages_after = 2;
-
-                // If the current page is less than three, move the current page closer to the 1st page
-                if ($page < 3) {
-                    $pages_before = $page - 1;
-                    $pages_after = $pages - 1;
-                }
-
-                // If the number of pages ahead of the current page is less than three, move the current page closer to the last page
-                else if ($pages < 3) {
-                    $pages_before = 5 - $pages;
-                    $pages_after = $pages - 1;
-                }
-
-                ?>
-                <?php for ($i = $page - $pages_before; $i <= $page + $pages_after; ++$i): ?>
-                    <?php if ($i == $page): ?>
-                        <span class="inactive_button"><?php echo $i; ?></span>
+                <div id="footer">
+                    <?php if ($page > 1): ?>
+                        <a class="active_button" href="/" onClick="page(<?php echo ($page - 1); ?>); return false;">Newer</a>
                     <?php else: ?>
-                        <a class="active_button" href="/" onClick="page(<?php echo $i; ?>); return false;"><?php echo $i; ?></a>
+                        <span class="inactive_button">Newer</span>
                     <?php endif; ?>
                     |
-                <?php endfor; ?>
-                <?php if ($pages > 1): ?>
-                    <a class="active_button" href="/" onClick="page(<?php echo $page + 1; ?>); return false;">Older</a>
-                <?php else: ?>
-                    <span class="inactive_button">Older</span>
-                <?php endif; ?>
-            </div>
-            <div id="copyright">
-                &copy; Copyright <?php echo date("Y"); ?> Xphysics<br/>
-                <?php echo "<a href=\"http://validator.w3.org/check?uri=", $_SERVER["site"]["url"], "&amp;charset=utf-8&amp;doctype=HTML5&amp;group=0&amp;user-agent=W3C_Validator%2F1.3\">Valid HTML 5</a> | <a href=\"http://jigsaw.w3.org/css-validator/validator?uri=", $_SERVER["site"]["url"], "&amp;profile=css3&amp;usermedium=all&amp;warning=no&amp;vextwarning=&amp;lang=en\">Valid CSS 3</a> | <a href=\"http://validator.w3.org/feed/check.cgi?url=", $_SERVER["site"]["url"], "?rss\">Valid RSS 2</a>"; ?><br/>
-                <span id="load_stats">Page loaded on <?php echo date("l, F j, Y g:i A T"); ?> in <?php echo round(microtime(true) - $start_time, 4); ?> seconds.</span>
+                    <?php
+
+                    // Calculate which/how many page tabs to show (moving 5-tab frame of reference)
+                    if ($result) {
+                        $pages = ceil($result->num_rows / 5);
+                        if (!$pages) {
+                            $pages = 1;
+                        }
+                    }
+                    else {
+                        $pages = 1;
+                    }
+                    $pages_before = 2;
+                    $pages_after = 2;
+
+                    // If the current page is less than three, move the current page closer to the 1st page
+                    if ($page < 3) {
+                        $pages_before = $page - 1;
+                        $pages_after = $pages - 1;
+                    }
+
+                    // If the number of pages ahead of the current page is less than three, move the current page closer to the last page
+                    else if ($pages < 3) {
+                        $pages_before = 5 - $pages;
+                        $pages_after = $pages - 1;
+                    }
+
+                    ?>
+                    <?php for ($i = $page - $pages_before; $i <= $page + $pages_after; ++$i): ?>
+                        <?php if ($i == $page): ?>
+                            <span class="inactive_button"><?php echo $i; ?></span>
+                        <?php else: ?>
+                            <a class="active_button" href="/" onClick="page(<?php echo $i; ?>); return false;"><?php echo $i; ?></a>
+                        <?php endif; ?>
+                        |
+                    <?php endfor; ?>
+                    <?php if ($pages > 1): ?>
+                        <a class="active_button" href="/" onClick="page(<?php echo $page + 1; ?>); return false;">Older</a>
+                    <?php else: ?>
+                        <span class="inactive_button">Older</span>
+                    <?php endif; ?>
+                </div>
+                <div id="copyright">
+                    &copy; Copyright <?php echo date("Y"); ?> Xphysics<br/>
+                    <?php echo "<a href=\"http://validator.w3.org/check?uri=", $_SERVER["site"]["url"], "&amp;charset=utf-8&amp;doctype=HTML5&amp;group=0&amp;user-agent=W3C_Validator%2F1.3\">Valid HTML 5</a> | <a href=\"http://jigsaw.w3.org/css-validator/validator?uri=", $_SERVER["site"]["url"], "&amp;profile=css3&amp;usermedium=all&amp;warning=no&amp;vextwarning=&amp;lang=en\">Valid CSS 3</a> | <a href=\"http://validator.w3.org/feed/check.cgi?url=", $_SERVER["site"]["url"], "?rss\">Valid RSS 2</a>"; ?><br/>
+                    <span id="load_stats">Page loaded on <?php echo date("l, F j, Y g:i A T"); ?> in <?php echo round(microtime(true) - $start_time, 4); ?> seconds.</span>
+                </div>
             </div>
         </div>
     </body>
