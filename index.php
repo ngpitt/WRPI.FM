@@ -1749,11 +1749,15 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
 
                                 ?>
                                 <?php if (!$row): ?>
-                                    <div class="post">
-                                        <div class="title">
-                                            No Posts
+                                    <?php if ($page !== 1): ?>
+                                        <form class="auto_submit" action="/" onSubmit="previous_page = 1; load('search=' + previous_search + '&amp;page=' + previous_page, '#content'); return false;"></form>
+                                    <?php else: ?>
+                                        <div class="post">
+                                            <div class="title">
+                                                No Posts
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php endif; ?>
                                 <?php else: ?>
                                     <?php for ($i = 0; $row && $i < 5; ++$i): ?>
                                         <?php $time = strtotime($row["date"]); ?>
