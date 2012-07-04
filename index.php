@@ -169,7 +169,7 @@ function bb2html($bb) {
                 $html .= "</a>";
                 break;
             case "[img]":
-                $html .= "<div style=\"margin-bottom: -13px; margin-top: 10px;\"><img src=\"";
+                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin-bottom: -13px; margin-top: 10px; padding: 10px;\"><img src=\"";
                 break;
             case "[img":
                 $img = strstr($tokens[$i], "=");
@@ -177,12 +177,12 @@ function bb2html($bb) {
                 $width = strstr($img, "x", true);
                 $height = strstr($img, "x");
                 $height = substr($height, 1);
-                $html .= "<div style=\"margin-bottom: -13px; margin-top: 10px;\"><img width=\"{$width}\" height=\"{$height}\" src=\"";
+                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin-bottom: -13px; margin-top: 10px; padding: 10px;\"><img width=\"{$width}\" height=\"{$height}\" src=\"";
                 break;
             case "[img width":
                 $img = substr($tokens[$i], 1, -1);
                 $img = str_replace("&quot;", "\"", $img);
-                $html .= "<div style=\"margin-bottom: -13px; margin-top: 10px;\"><{$img} src=\"";
+                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin-bottom: -13px; margin-top: 10px;\"><{$img} src=\"";
                 $alt = true;
                 break;
             case "[/img]":
@@ -190,7 +190,7 @@ function bb2html($bb) {
                 $alt = false;
                 break;
             case "[youtube]":
-                $html .= "<div style=\"margin-bottom: -13px; margin-top: 10px; text-align: center;\"><iframe id=\"ytplayer\" width=\"640\" height=\"390\" src=\"http://www.youtube.com/embed/";
+                $html .= "<div style=\"margin-bottom: -13px; margin-top: 10px; padding: 10px; text-align: center;\"><iframe id=\"ytplayer\" width=\"640\" height=\"390\" src=\"http://www.youtube.com/embed/";
                 break;
             case "[/youtube]":
                 $html .= "/\" style=\"border: 0px\"></iframe></div>";
