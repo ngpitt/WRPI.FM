@@ -169,7 +169,7 @@ function bb2html($bb) {
                 $html .= "</a>";
                 break;
             case "[img]":
-                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin-bottom: -13px; margin-top: 10px; padding: 10px; padding-bottom: 7px;\"><img src=\"";
+                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin: auto; margin-bottom: -13px; margin-top: 10px; padding: 10px; padding-bottom: 7px; width: 90%;\"><img src=\"";
                 break;
             case "[img":
                 $img = strstr($tokens[$i], "=");
@@ -177,12 +177,12 @@ function bb2html($bb) {
                 $width = strstr($img, "x", true);
                 $height = strstr($img, "x");
                 $height = substr($height, 1);
-                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin-bottom: -13px; margin-top: 10px; padding: 10px; padding-bottom: 7px;\"><img width=\"{$width}\" height=\"{$height}\" src=\"";
+                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin: auto; margin-bottom: -13px; margin-top: 10px; padding: 10px; padding-bottom: 7px; width: 90%;\"><img width=\"{$width}\" height=\"{$height}\" src=\"";
                 break;
             case "[img width":
                 $img = substr($tokens[$i], 1, -1);
                 $img = str_replace("&quot;", "\"", $img);
-                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin-bottom: -13px; margin-top: 10px; padding: 10px; padding-bottom: 7px;\"><{$img} src=\"";
+                $html .= "<div style=\"background-color: {$_SERVER["style"]["highlight_color"]}; margin: auto; margin-bottom: -13px; margin-top: 10px; padding: 10px; padding-bottom: 7px; width: 90%;\"><{$img} src=\"";
                 $alt = true;
                 break;
             case "[/img]":
@@ -1588,14 +1588,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                 <div id="background">
                     <div id="foreground">
                         <?php if (isset($_GET["about"])): ?>
-                            <?php
-
-                            // Get the account
-                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["about"]}'");
-                            if ($result):
-                                $row = $result->fetch_assoc();
-
-                                ?>
+                            <?php $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["about"]}'"); ?>
+                            <?php if ($result): ?>
+                                <?php $row = $result->fetch_assoc(); ?>
                                 <?php if ($row): ?>
                                     <div class="post">
                                         <div class="title">
@@ -1617,14 +1612,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php elseif (isset($_GET["account"]) && isset($_SESSION["logged_in"])): ?>
-                            <?php
-
-                            // Get the account
-                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["account"]}'");
-                            if ($result):
-                                $row = $result->fetch_assoc();
-
-                                ?>
+                            <?php $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["account"]}'"); ?>
+                            <?php if ($result): ?>
+                                <?php $row = $result->fetch_assoc(); ?>
                                 <?php if ($row): ?>
                                     <form action="/" onSubmit="update_account(this); return false;">
                                         <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
@@ -1651,12 +1641,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                 <?php endif; ?>
                             <?php endif; ?>
                         <?php elseif (isset($_GET["admin"]) && isset($_SESSION["logged_in"]) && $_SESSION["admin"]): ?>
-                            <?php
-
-                            // Get all accounts
-                            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users");
-
-                            ?>
+                            <?php $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users"); ?>
                             <table>
                                 <tr>
                                     <th>Username</th>
@@ -1733,23 +1718,17 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             $limit = ($_SERVER["page"] - 1) * 5;
                             $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT {$limit}, 50");
 
+                            //Determine how many page tabs to show
                             if ($result) {
                                 $row = $result->fetch_assoc();
-
-                                //Determine how many page tabs to show
                                 $_SERVER["page_tabs"] = ceil($result->num_rows / 5);
                             }
 
                             ?>
                             <?php if (!$result || !$row): ?>
                                 <?php if ($_SERVER["page"] !== 1): ?>
-                                    <?php
-
-                                    // Don't show page controls
-                                    unset($_SERVER["page"]);
-                                    unset($_SERVER["page_tabs"]);
-
-                                    ?>
+                                    <?php unset($_SERVER["page"]); ?>
+                                    <?php unset($_SERVER["page_tabs"]); ?>
                                     <div class="post">
                                         <div class="title">
                                             Invalid Page
@@ -1782,12 +1761,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                                 <?php echo $row["title"]; ?>
                                             </div>
                                             <div>
-                                                <?php
-
-                                                // Display the time posted
-                                                echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time);
-
-                                                ?>
+                                                <?php echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time); ?>
                                             </div>
                                             <div class="content">
                                                 <?php echo bb2html($row["content"]); ?>
@@ -1812,9 +1786,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         <?php endif; ?>
                         |
                     <?php endif; ?>
-                    <?php
+                    <?php if (isset($_SERVER["page_tabs"])): ?>
+                        <?php
 
-                    if (isset($_SERVER["page_tabs"])):
                         $page_tabs_before = 2;
                         $page_tabs_after = 2;
 
