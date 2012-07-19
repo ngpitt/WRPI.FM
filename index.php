@@ -1630,7 +1630,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                         <?php endif; ?>
                                         <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
                                         <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
-                                        <input type="button" value="Delete" onClick="delete_account(<?php echo $row["user_id"]; ?>);"/>
+                                        <input type="button" value="Delete" onClick="delete_account('<?php echo $row["user_id"]; ?>');"/>
                                     </form>
                                 <?php else: ?>
                                     <div class="post">
