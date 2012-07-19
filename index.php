@@ -106,7 +106,7 @@ function bb2html($bb) {
             case "[/list]":
             case "[/ul]":
                 $html .= $bullet ? "</li></ul>" : "</ul>";
-                $bullet = false;
+                $list = $bullet = false;
                 break;
             case "[/ol]":
                 $html .= $bullet ? "</li></ol>" : "</ol>";
@@ -845,7 +845,7 @@ if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST[
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
     if ($result) {
         $row = $result->fetch_assoc();
-        if (!$row && $row["user_id"] !== $_SESSION["user_id"]) {
+        if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
             echo 4;
             return;
         }
@@ -1800,7 +1800,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
 
                         // If the number of pages ahead of the current page is less than three, move the current page closer to the last page
                         else if ($_SERVER["page_tabs"] < 3) {
-                            $page_tabs_before = 5 - $_SERVER["page_tabs"];
+                            $page_tabs_before = $_SERVER["page"] - $_SERVER["page_tabs"];
                             $page_tabs_after = $_SERVER["page_tabs"] - 1;
                         }
 
