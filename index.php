@@ -28,7 +28,7 @@ function bb2html($bb) {
     $tokens = tokenize($bb);
 
     // Loop through each token
-    for ($i = 0; $i < count($tokens); ++$i) {
+    for ($i = 0; $i < count($tokens); $i++) {
         $token = $tokens[$i];
 
         // Remove content after equal signs
@@ -235,7 +235,7 @@ function bb2rss($bb) {
     $tokens = tokenize($bb);
 
     // Loop through each token
-    for ($i = 0; $i < count($tokens); ++$i) {
+    for ($i = 0; $i < count($tokens); $i++) {
         $token = $tokens[$i];
 
         // Remove content after equal signs
@@ -1742,7 +1742,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                     </div>
                                 <?php endif; ?>
                             <?php else: ?>
-                                <?php for ($i = 0; $row && $i < 5; ++$i): ?>
+                                <?php for ($i = 0; $row && $i < 5; $i++): ?>
                                     <?php $time = strtotime($row["date"]); ?>
                                     <?php if (isset($_GET["update_post"]) && $_GET["update_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
                                         <form action="/" onSubmit="update_post(this); return false;">
@@ -1805,7 +1805,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         }
 
                         ?>
-                        <?php for ($i = $_SERVER["page"] - $page_tabs_before; $i <= $_SERVER["page"] + $page_tabs_after; ++$i): ?>
+                        <?php for ($i = $_SERVER["page"] - $page_tabs_before; $i <= $_SERVER["page"] + $page_tabs_after; $i++): ?>
                             <?php if ($i == $_SERVER["page"]): ?>
                                 <span class="inactive_button"><?php echo $i; ?></span>
                             <?php else: ?>
