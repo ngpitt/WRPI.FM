@@ -996,7 +996,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Variables to post
                         finish_password_reset: true, 
                         id: form.id.value,
-                        password: form.password.value, 
+                        password: form.password.value
                     }, function (result) {
                         
                         // Process the returned value
@@ -1017,7 +1017,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     
                     // Variables to post
                     finish_registration: true, 
-                    id: form.id.value, 
+                    id: form.id.value
                 }, function (result) {
                     
                     // Process the returned value
@@ -1209,8 +1209,8 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     $.post("/", {
                         
                         // Variables to post
-                        start_password_reset: true, 
-                        email: form.email.value, 
+                        start_password_reset: true,
+                        email: form.email.value
                     }, function (result) {
                         
                         // Process the returned value
