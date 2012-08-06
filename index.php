@@ -1,5 +1,4 @@
 <?php
-
 /*
   Copyright Xphysics 2012. All Rights Reserved.
 
@@ -209,8 +208,7 @@ function bb2html($bb) {
 
                     // Remove new lines
                     $tokens[$i] = str_replace("\n", "", $tokens[$i]);
-                }
-                else {
+                } else {
 
                     // Replace new lines with HTML break tags
                     $tokens[$i] = str_replace("\n", "<br/>", $tokens[$i]);
@@ -426,9 +424,8 @@ if (isset($_POST["delete_account"]) && isset($_POST["user_id"]) && isset($_SESSI
         // Delete the account's posts
         $_SERVER["database"]["mysqli"]->query("DELETE FROM posts WHERE user_id = '{$_POST["user_id"]}'");
 
-        echo 0;
-    }
-    else {
+        echo 1;
+    } else {
 
         // Delete the account
         $_SERVER["database"]["mysqli"]->query("DELETE FROM users WHERE user_id = '{$_SESSION["user_id"]}'");
@@ -439,22 +436,20 @@ if (isset($_POST["delete_account"]) && isset($_POST["user_id"]) && isset($_SESSI
         // Remove session variables (log the user out)
         session_unset();
 
-        echo 1;
+        echo 0;
     }
     return;
 }
 
 // Process the delete post form
-if (isset($_POST["delete_post"]) && isset($_POST["post_id"]) && isset($_SESSION["logged_in"])) {
+if (isset($_POST["delete_post"]) && isset($_POST["post_id"]) && isset($_SESSION["logged_in"]) && $_SESSION["edit"]) {
 
     // Check for valid permissions
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE post_id = '{$_POST["post_id"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row["user_id"] !== $_SESSION["user_id"] && !$_SESSION["admin"]) {
-            echo 1;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
+        echo 1;
+        return;
     }
 
     // Delete the post
@@ -467,20 +462,20 @@ if (isset($_POST["delete_post"]) && isset($_POST["post_id"]) && isset($_SESSION[
 // Process finish password reset form
 if (isset($_POST["finish_password_reset"]) && isset($_POST["id"]) && isset($_POST["password"]) && isset($_SESSION["id"]) && isset($_SESSION["user_id"]) && isset($_SESSION["admin"])) {
 
-    // Check the verification id
+    // Check the verification ID
     if ($_POST["id"] !== $_SESSION["id"]) {
         echo 1;
         return;
     }
-
-    // Remove temporary session variables
-    unset($_SESSION["id"]);
 
     // Generate a new password hash
     $_POST["password"] = hash("sha256", $_POST["password"] . $_SESSION["user_id"]);
 
     // Update the account
     $_SERVER["database"]["mysqli"]->query("UPDATE users SET password = '{$_POST["password"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
+
+    // Remove temporary session variables
+    unset($_SESSION["id"]);
 
     // Log the user in
     $_SESSION["logged_in"] = true;
@@ -492,7 +487,7 @@ if (isset($_POST["finish_password_reset"]) && isset($_POST["id"]) && isset($_POS
 // Process the finish registration form
 if (isset($_POST["finish_registration"]) && isset($_POST["id"]) && isset($_SESSION["id"]) && isset($_SESSION["user_id"]) && isset($_SESSION["username"]) && isset($_SESSION["password"]) && isset($_SESSION["email"]) && isset($_SESSION["subscribe"]) && isset($_SESSION["admin"])) {
 
-    // Check the verification id
+    // Check the verification ID
     if ($_POST["id"] !== $_SESSION["id"]) {
         echo 1;
         return;
@@ -500,26 +495,22 @@ if (isset($_POST["finish_registration"]) && isset($_POST["id"]) && isset($_SESSI
 
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_SESSION["username"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row) {
-            echo 2;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row) {
+        echo 2;
+        return;
     }
 
     // Check for email in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_SESSION["email"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row) {
-            echo 3;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row) {
+        echo 3;
+        return;
     }
 
     // Create the account
-    $_SERVER["database"]["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', admin = {$_SESSION["admin"]}, subscribe = {$_SESSION["subscribe"]}");
+    $_SERVER["database"]["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', edit = {$_SESSION["edit"]}, admin = {$_SESSION["admin"]}, subscribe = {$_SESSION["subscribe"]}");
 
     // Remove temporary session variables
     unset($_SESSION["id"]);
@@ -537,15 +528,14 @@ if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"]
 
     // Check the user's password hash
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
+    $row = $result->fetch_assoc();
+    if ($row) {
         $_POST["password"] = hash("sha256", $_POST["password"] . $row["user_id"]);
         if ($_POST["password"] !== $row["password"]) {
             echo 1;
             return;
         }
-    }
-    else {
+    } else {
         echo 1;
         return;
     }
@@ -555,8 +545,12 @@ if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"]
     $_SESSION["user_id"] = $row["user_id"];
     $_SESSION["username"] = $row["username"];
     $_SESSION["email"] = $row["email"];
+    $_SESSION["edit"] = $row["edit"] ? true : false;
     $_SESSION["admin"] = $row["admin"] ? true : false;
     $_SESSION["subscribe"] = $row["subscribe"] ? true : false;
+
+    // Update last login time
+    $_SERVER["database"]["mysqli"]->query("UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE user_id = '{$_SESSION["user_id"]}'");
 
     echo 0;
     return;
@@ -573,7 +567,7 @@ if (isset($_POST["logout"])) {
 }
 
 // Process the new post form
-if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content"]) && isset($_SESSION["logged_in"])) {
+if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content"]) && isset($_SESSION["logged_in"]) && $_SESSION["edit"]) {
 
     // Create the new post
     $post_id = uniqid();
@@ -612,15 +606,12 @@ if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content
     </body>
 </html>";
 
-    // Loop through subscribed users
+    // Send the email to subscribed users
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE subscribe = 1");
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-
-            // Send the email
-            mail($row["email"], $subject, $body, $headers);
-        }
+    while ($row = $result->fetch_assoc()) {
+        mail($row["email"], $subject, $body, $headers);
     }
+
     echo 0;
     return;
 }
@@ -640,60 +631,51 @@ if (isset($_GET["rss"])) {
 
     // Get the specified feed
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["rss"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
+    $row = $result->fetch_assoc();
 
-        // Check if the feed is for a specific user
-        $user_specific = $row ? true : false;
+    // Check if the feed is for a specific user
+    $user_specific = $row ? true : false;
 
-        echo "        <title>", $_SERVER["site"]["title"], " - ", $user_specific ? "Posts by {$row["username"]}" : "All Posts", "</title>
+    echo "        <title>", $_SERVER["site"]["title"], " - ", $user_specific ? "Posts by {$row["username"]}" : "All Posts", "</title>
         <description>Latest Posts @ ", $_SERVER["site"]["description"], "</description>
         <link>", $_SERVER["site"]["url"], "</link>
         <pubDate>", date("D, d M Y H:i:s T", $pub_date), "</pubDate>\n";
 
-        // Load the most recent 5 posts
-        if ($user_specific) {
-            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE user_id = '{$_GET["rss"]}' ORDER BY date DESC LIMIT 5");
+    // Load the most recent 5 posts
+    if ($user_specific) {
+        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE user_id = '{$_GET["rss"]}' ORDER BY date DESC LIMIT 5");
+    } else {
+        $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts ORDER BY date DESC LIMIT 5");
+    }
+    $row = $result->fetch_assoc();
+
+    // Get the last build date from the most recent post
+    if ($row) {
+        $last_build_date = strtotime($row["date"]);
+        if ($last_build_date < $pub_date) {
+            $last_build_date = $pub_date;
         }
-        else {
-            $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts ORDER BY date DESC LIMIT 5");
-        }
+    } else {
+        $last_build_date = $pub_date;
+    }
 
-        if ($result) {
-            $row = $result->fetch_assoc();
-
-            // Get the last build date from the most recent post
-            if ($row) {
-                $last_build_date = strtotime($row["date"]);
-                if ($last_build_date < $pub_date) {
-                    $last_build_date = $pub_date;
-                }
-            }
-            else {
-                $last_build_date = $pub_date;
-            }
-
-            echo "        <lastBuildDate>", date("D, d M Y H:i:s T", $last_build_date), "</lastBuildDate>
+    echo "        <lastBuildDate>", date("D, d M Y H:i:s T", $last_build_date), "</lastBuildDate>
         <atom:link href=\"", $_SERVER["site"]["url"], "?rss", $user_specific ? "={$_GET["rss"]}" : "", "\" rel=\"self\" type=\"application/rss+xml\"/>";
 
-            // Loop through the most recent 5 posts
-            while ($row) {
+    // Loop through the most recent 5 posts
+    do {
 
-                // Remove BB formatting
-                $row["content"] = bb2rss($row["content"]);
+        // Remove BB formatting
+        $row["content"] = bb2rss($row["content"]);
 
-                echo "\n        <item>
+        echo "\n        <item>
             <title>", $row["title"], "</title>
             <description>", $row["content"], "</description>
             <link>", $_SERVER["site"]["url"], "#search=", $row["post_id"], "&amp;page=1</link>
             <guid>", $_SERVER["site"]["url"], "#search=", $row["post_id"], "&amp;page=1</guid>
             <pubDate>", date("D, d M Y H:i:s T", strtotime($row["date"])), "</pubDate>
         </item>";
-
-                $row = $result->fetch_assoc();
-            };
-        }
-    }
+    } while ($row = $result->fetch_assoc());
     echo "\n    </channel>
 </rss>\n";
     return;
@@ -704,12 +686,9 @@ if (isset($_POST["start_password_reset"]) && isset($_POST["email"])) {
 
     // Check if the email address exists
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if (!$row) {
-            echo 1;
-            return;
-        }
+    if ($row = $result->fetch_assoc()) {
+        echo 1;
+        return;
     }
 
     // Set temporary session variables
@@ -717,6 +696,7 @@ if (isset($_POST["start_password_reset"]) && isset($_POST["email"])) {
     $_SESSION["user_id"] = $row["user_id"];
     $_SESSION["username"] = $row["username"];
     $_SESSION["email"] = $row["email"];
+    $_SESSION["edit"] = $row["edit"] ? true : false;
     $_SESSION["admin"] = $row["admin"] ? true : false;
     $_SESSION["subscribe"] = $row["subscribe"] ? true : false;
 
@@ -757,12 +737,10 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_POST["username"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row) {
-            echo 1;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row) {
+        echo 1;
+        return;
     }
 
     // Check for invalid email address
@@ -773,12 +751,10 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 
     // Check for email address in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row) {
-            echo 3;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row) {
+        echo 3;
+        return;
     }
 
     // Set temporary session variables
@@ -787,8 +763,9 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
     $_SESSION["username"] = $_POST["username"];
     $_SESSION["password"] = hash("sha256", $_POST["password"] . $_SESSION["user_id"]);
     $_SESSION["email"] = $_POST["email"];
-    $_SESSION["subscribe"] = $_POST["subscribe"];
+    $_SESSION["edit"] = "0";
     $_SESSION["admin"] = "0";
+    $_SESSION["subscribe"] = $_POST["subscribe"];
 
     // Create registration request email
     $headers = "From: {$_SERVER["site"]["title"]} <do-not-reply@{$_SERVER["site"]["domain"]}>\r\nMIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\n";
@@ -823,16 +800,14 @@ if (isset($_POST["start_registration"]) && isset($_POST["username"]) && isset($_
 }
 
 // Process the update account form
-if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["email"]) && isset($_POST["about"]) && isset($_POST["admin"]) && isset($_POST["subscribe"]) && isset($_SESSION["logged_in"])) {
+if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST["username"]) && isset($_POST["password"]) && isset($_POST["email"]) && isset($_POST["about"]) && isset($_POST["edit"]) && isset($_POST["admin"]) && isset($_POST["subscribe"]) && isset($_SESSION["logged_in"])) {
 
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_POST["username"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
-            echo 2;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row && $row["user_id"] !== $_POST["user_id"]) {
+        echo 2;
+        return;
     }
 
     // Check for invalid email address
@@ -843,20 +818,18 @@ if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST[
 
     // Check for email address in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
-            echo 4;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row && $row["user_id"] !== $_POST["user_id"]) {
+        echo 4;
+        return;
     }
 
 
     // Check for valid permissions
-    if ($_POST["user_id"] !== $_SESSION["user_id"] && $_SESSION["admin"]) {
+    if ($_SESSION["admin"]) {
 
         // Update the account
-        $_SERVER["database"]["mysqli"]->query("UPDATE users SET username = '{$_POST["username"]}', email = '{$_POST["email"]}', about = '{$_POST["about"]}', admin = {$_POST["admin"]}, subscribe = {$_POST["subscribe"]} WHERE user_id = '{$_POST["user_id"]}'");
+        $_SERVER["database"]["mysqli"]->query("UPDATE users SET username = '{$_POST["username"]}', email = '{$_POST["email"]}', about = '{$_POST["about"]}', edit = {$_POST["edit"]}, admin = {$_POST["admin"]}, subscribe = {$_POST["subscribe"]} WHERE user_id = '{$_POST["user_id"]}'");
 
         // Update the password if specified
         if ($_POST["password"] !== "") {
@@ -868,9 +841,15 @@ if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST[
             $_SERVER["database"]["mysqli"]->query("UPDATE users SET password = '{$_POST["password"]}' WHERE user_id = '{$_POST["user_id"]}'");
         }
 
+        // Update session variables
+        $_SESSION["username"] = $_POST["username"];
+        $_SESSION["email"] = $_POST["email"];
+        $_SESSION["edit"] = $_POST["edit"] ? true : false;
+        $_SESSION["admin"] = $_POST["admin"] ? true : false;
+        $_SESSION["subscribe"] = $_POST["subscribe"] ? true : false;
+
         echo 1;
-    }
-    else {
+    } else {
 
         // Update the account
         $_SERVER["database"]["mysqli"]->query("UPDATE users SET username = '{$_POST["username"]}', email = '{$_POST["email"]}', about = '{$_POST["about"]}', subscribe = {$_POST["subscribe"]} WHERE user_id = '{$_SESSION["user_id"]}'");
@@ -897,25 +876,22 @@ if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST[
 }
 
 // Process the update post form
-if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["title"]) && isset($_POST["content"]) && isset($_SESSION["logged_in"])) {
+if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["title"]) && isset($_POST["content"]) && isset($_SESSION["logged_in"]) && $_SESSION["edit"]) {
 
     // Check for valid permissions
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE post_id = '{$_POST["post_id"]}'");
-    if ($result) {
-        $row = $result->fetch_assoc();
-        if ($row["user_id"] !== $_SESSION["user_id"] && !$_SESSION["admin"]) {
-            echo 1;
-            return;
-        }
+    $row = $result->fetch_assoc();
+    if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
+        echo 1;
+        return;
     }
 
     // Update the post
-    $_SERVER["database"]["mysqli"]->query("UPDATE posts SET title = '{$_POST["title"]}', content = '{$_POST["content"]}' WHERE post_id = '{$_POST["post_id"]}'");
+    $_SERVER["database"]["mysqli"]->query("UPDATE posts SET updated = 1, title = '{$_POST["title"]}', content = '{$_POST["content"]}' WHERE post_id = '{$_POST["post_id"]}'");
 
     echo 0;
     return;
 }
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -942,10 +918,10 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the returned value
                         switch(result){
                             case "0":
-                                load("admin", "#content");
+                                load("search=" + search + "&page=" + page, "#content");
                                 break;
                             case "1":
-                                load("search=" + search + "&page=" + page, "#content");
+                                load("admin", "#content");
                         }
                     });
                 }
@@ -953,7 +929,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
             
             // Process the delete post form
             function delete_post(post_id) {
-            
+                
                 // Confirm the post deletion
                 if (confirm("Are you sure?")) {
                     
@@ -969,6 +945,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         switch(result) {
                             case "0":
                                 load("search=" + search + "&page=" + page, "#content");
+                                break;
+                            case "1":
+                                alert("Invalid permissions.");
                         }
                     });
                 }
@@ -1004,6 +983,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             case "0":
                                 load("search=" + search + "&page=" + page, "#content");
                                 alert("Password reset successful.");
+                                break;
+                            case "1":
+                                alert("Invalid verification ID.");
                         }
                     });
                 }
@@ -1011,7 +993,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
             
             // Process the finish registration form
             function finish_registration(form) {
-            
+                
                 // Post the request
                 $.post("/", {
                     
@@ -1025,7 +1007,10 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         case "0":
                             load("search=" + search + "&page=" + page, "#content");
                             alert("Registration successful.");
-                            break
+                            break;
+                        case "1":
+                            alert("Invalid verification ID.");
+                            break;
                         case "2":
                             alert("Username in use.");
                             load("start_registration", "#content");
@@ -1166,7 +1151,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
             
             // Load the requested page
             function Page(new_page) {
-            
+                
                 // Check if the requested page is different from the currently loaded page
                 if (new_page !== page) {
                     
@@ -1180,7 +1165,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
             
             // Load the requested search
             function Search(new_search) {
-            
+                
                 // Check if the requested search is different from the currently loaded search
                 if (new_search !== search) {
                     
@@ -1319,6 +1304,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         password: form.password.value, 
                         email: form.email.value,
                         subscribe: form.subscribe.checked ? 1 : 0,
+                        edit: form.edit.checked ? 1 : 0,
                         admin: form.admin.checked ? 1 : 0,
                         about: form.about.value
                     }, function (result) {
@@ -1326,10 +1312,10 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         // Process the retured value
                         switch(result) {
                             case "0":
-                                load("admin", "#content");
+                                load("search=" + search + "&page=" + page, "#content");
                                 break;
                             case "1":
-                                load("search=" + search + "&page=" + page, "#content");
+                                load("admin", "#content");
                                 break;
                             case "2":
                                 alert("Username in use.");
@@ -1573,7 +1559,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                 <input class="textbox" name="search" type="text" maxlength="128" placeholder="Search" onKeyUp="Search(this.value);"/>
                 <?php if (isset($_SESSION["logged_in"])): ?>
                     <a class="active_button" href="/" onClick="logout(); return false;">Logout</a>
-                    <a class="active_button" href="/" onClick="search = ''; page = 1; load('new_post&amp;search=' + search + '&amp;page=' + page, '#content', false); return false;">New Post</a>
+                    <?php if ($_SESSION["edit"]): ?>
+                        <a class="active_button" href="/" onClick="search = ''; page = 1; load('new_post&amp;search=' + search + '&amp;page=' + page, '#content', false); return false;">New Post</a>
+                    <?php endif; ?>
                     <?php if ($_SESSION["admin"]): ?>
                         <a class="active_button" href="/" onClick="load('admin', '#content'); return false;">Admin</a>
                     <?php else: ?>
@@ -1589,56 +1577,54 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     <div id="foreground">
                         <?php if (isset($_GET["about"])): ?>
                             <?php $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["about"]}'"); ?>
-                            <?php if ($result): ?>
-                                <?php $row = $result->fetch_assoc(); ?>
-                                <?php if ($row): ?>
-                                    <div class="post">
-                                        <div class="title">
-                                            <?php echo $row["username"]; ?>
-                                        </div>
-                                        <div>
-                                            <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
-                                        </div>
-                                        <div class="content">
-                                            <?php echo bb2html($row["about"]); ?>
-                                        </div>
+                            <?php $row = $result->fetch_assoc(); ?>
+                            <?php if ($row): ?>
+                                <div class="post">
+                                    <div class="title">
+                                        <?php echo $row["username"]; ?>
                                     </div>
-                                <?php else: ?>
-                                    <div class="post">
-                                        <div class="title">
-                                            Invalid Account
-                                        </div>
+                                    <div>
+                                        <?php echo "<a href=\"/?rss=", $row["user_id"], "\">RSS Feed</a>"; ?>
                                     </div>
-                                <?php endif; ?>
+                                    <div class="content">
+                                        <?php echo bb2html($row["about"]); ?>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="post">
+                                    <div class="title">
+                                        Invalid Account
+                                    </div>
+                                </div>
                             <?php endif; ?>
                         <?php elseif (isset($_GET["account"]) && isset($_SESSION["logged_in"])): ?>
                             <?php $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE user_id = '{$_GET["account"]}'"); ?>
-                            <?php if ($result): ?>
-                                <?php $row = $result->fetch_assoc(); ?>
-                                <?php if ($row): ?>
-                                    <form action="/" onSubmit="update_account(this); return false;">
-                                        <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
-                                        <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
-                                        <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
-                                        <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
-                                        <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
-                                        Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
-                                        <?php if ($row["user_id"] !== $_SESSION["user_id"] && $_SESSION["admin"]): ?>
-                                            Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/>
-                                        <?php else: ?>
-                                            <input name="admin" type="checkbox" style="display: none;"/>
-                                        <?php endif; ?>
-                                        <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
-                                        <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
-                                        <input type="button" value="Delete" onClick="delete_account('<?php echo $row["user_id"]; ?>');"/>
-                                    </form>
-                                <?php else: ?>
-                                    <div class="post">
-                                        <div class="title">
-                                            Invalid Account
-                                        </div>
+                            <?php $row = $result->fetch_assoc(); ?>
+                            <?php if ($row): ?>
+                                <form action="/" onSubmit="update_account(this); return false;">
+                                    <input name="user_id" type="hidden" value="<?php echo $row["user_id"]; ?>"/>
+                                    <input class="textbox" name="username" type="text" maxlength="32" value="<?php echo $row["username"]; ?>" placeholder="Username"/><br/>
+                                    <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
+                                    <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
+                                    <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
+                                    Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
+                                    <?php if ($_SESSION["admin"]): ?>
+                                        Edit: <input name="edit" type="checkbox" <?php echo $row["edit"] ? "checked" : ""; ?>/>
+                                        Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/>
+                                    <?php else: ?>
+                                        <input name="edit" type="checkbox" style="display: none;"/>
+                                        <input name="admin" type="checkbox" style="display: none;"/>
+                                    <?php endif; ?>
+                                    <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
+                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
+                                    <input type="button" value="Delete" onClick="delete_account('<?php echo $row["user_id"]; ?>');"/>
+                                </form>
+                            <?php else: ?>
+                                <div class="post">
+                                    <div class="title">
+                                        Invalid Account
                                     </div>
-                                <?php endif; ?>
+                                </div>
                             <?php endif; ?>
                         <?php elseif (isset($_GET["admin"]) && isset($_SESSION["logged_in"]) && $_SESSION["admin"]): ?>
                             <?php $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users"); ?>
@@ -1646,16 +1632,18 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                 <tr>
                                     <th>Username</th>
                                     <th>Email</th>
-                                    <th>Subscribed</th>
+                                    <th>Edit</th>
                                     <th>Admin</th>
+                                    <th>Subscribed</th>
                                 </tr>
                                 <?php if ($result): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#content');">
                                             <td><?php echo $row["username"]; ?></td>
                                             <td><?php echo $row["email"]; ?></td>
-                                            <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
+                                            <td><?php echo $row["edit"] ? "&#10004;" : "&#10008;"; ?></td>
                                             <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
+                                            <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php endif; ?>
@@ -1693,7 +1681,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                 <input type="submit" value="Verify"/>
                             </form>
                         <?php else: ?>
-                            <?php if (isset($_GET["new_post"]) && isset($_SESSION["logged_in"])): ?>
+                            <?php if (isset($_GET["new_post"]) && isset($_SESSION["logged_in"]) && $_SESSION["edit"]): ?>
                                 <form action="/" onSubmit="new_post(this); return false;">
                                     <input class="title" name="title" type="text" maxlength="128" placeholder="Title"><br/>
                                     <div style="text-align: left">
@@ -1706,7 +1694,6 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                 <hr/>
                             <?php endif; ?>
                             <?php
-
                             // Initialize the search term, page, and number of page tabs
                             $search = isset($_GET["search"]) ? $_GET["search"] : "";
                             $_SERVER["page"] = $_SERVER["page_tabs"] = 1;
@@ -1718,14 +1705,12 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             $limit = ($_SERVER["page"] - 1) * 5;
                             $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY date DESC LIMIT {$limit}, 50");
 
-                            //Determine how many page tabs to show
-                            if ($result) {
-                                $row = $result->fetch_assoc();
-                                $_SERVER["page_tabs"] = ceil($result->num_rows / 5);
-                            }
+                            // Determine how many page tabs to show
+                            $_SERVER["page_tabs"] = ceil($result->num_rows / 5);
 
+                            $row = $result->fetch_assoc();
                             ?>
-                            <?php if (!$result || !$row): ?>
+                            <?php if (!$row): ?>
                                 <?php if ($_SERVER["page"] !== 1): ?>
                                     <?php unset($_SERVER["page"]); ?>
                                     <?php unset($_SERVER["page_tabs"]); ?>
@@ -1743,13 +1728,14 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                 <?php endif; ?>
                             <?php else: ?>
                                 <?php for ($i = 0; $row && $i < 5; $i++): ?>
-                                    <?php $time = strtotime($row["date"]); ?>
+                                    <?php $date = strtotime($row["date"]); ?>
+                                    <?php $date_updated = strtotime($row["date_updated"]); ?>
                                     <?php if (isset($_GET["update_post"]) && $_GET["update_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
                                         <form action="/" onSubmit="update_post(this); return false;">
                                             <input name="post_id" type="hidden" value="<?php echo $_GET["update_post"]; ?>"/>
                                             <input class="title" name="title" type="text" maxlength="128" value="<?php echo $row["title"]; ?>" placeholder="Title"><br/>
                                             <div style="text-align: left">
-                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS, Y", $time), " @ ", date("g:i A", $time); ?><br/>
+                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS, Y", $date), " @ ", date("g:i A", $date); ?> <i>(updated on <?php echo date("F jS, Y"), " @ ", date("g:i A"); ?>)</i><br/>
                                             </div>
                                             <textarea class="content" name="content" maxlength="1024" placeholder="Content"><?php echo $row["content"]; ?></textarea>
                                             <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
@@ -1757,11 +1743,14 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                         </form>
                                     <?php else: ?>
                                         <div class="post">
-                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($row["user_id"] == $_SESSION["user_id"] || $_SESSION["admin"]) && !isset($_GET["update_post"])) ? "onClick=\"load('update_post={$row["post_id"]}&amp;search=' + search + '&amp;page=' + page, '#content');\" style=\"cursor: pointer;\"" : ""; ?>>
+                                            <div class="title" <?php echo (isset($_SESSION["logged_in"]) && ($_SESSION["edit"] && $row["user_id"] === $_SESSION["user_id"]) && !isset($_GET["update_post"])) ? "onClick=\"load('update_post={$row["post_id"]}&amp;search=' + search + '&amp;page=' + page, '#content');\" style=\"cursor: pointer;\"" : ""; ?>>
                                                 <?php echo $row["title"]; ?>
                                             </div>
                                             <div>
-                                                <?php echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $time), " @ ", date("g:i A", $time); ?>
+                                                <?php echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $date), " @ ", date("g:i A", $date); ?>
+                                                <?php if ($row["updated"]): ?>
+                                                    <?php echo "<i>(updated on ", date("F jS, Y", $date_updated), " @ ", date("g:i A", $date_updated), "</i>"; ?>
+                                                <?php endif; ?>
                                             </div>
                                             <div class="content">
                                                 <?php echo bb2html($row["content"]); ?>
@@ -1788,7 +1777,6 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                     <?php endif; ?>
                     <?php if (isset($_SERVER["page_tabs"])): ?>
                         <?php
-
                         $page_tabs_before = 2;
                         $page_tabs_after = 2;
 
@@ -1803,7 +1791,6 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             $page_tabs_before = $_SERVER["page"] - $_SERVER["page_tabs"];
                             $page_tabs_after = $_SERVER["page_tabs"] - 1;
                         }
-
                         ?>
                         <?php for ($i = $_SERVER["page"] - $page_tabs_before; $i <= $_SERVER["page"] + $page_tabs_after; $i++): ?>
                             <?php if ($i == $_SERVER["page"]): ?>
