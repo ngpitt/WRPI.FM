@@ -581,7 +581,7 @@ if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content
     // Create the new post email
     $headers = "From: {$_SERVER["site"]["title"]} <do-not-reply@{$_SERVER["site"]["domain"]}>\r\nMIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\n";
     $subject = $row["title"];
-    $date = date("F jS, Y @ g:i A", $date);
+    $date = date("F jS Y", $date);
 
     // Convert BB formatting to HTML formatting
     $row["content"] = bb2html($row["content"]);
@@ -1685,7 +1685,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                 <form action="/" onSubmit="new_post(this); return false;">
                                     <input class="title" name="title" type="text" maxlength="128" placeholder="Title"><br/>
                                     <div style="text-align: left">
-                                        by <a href="/" onClick="load('about=<?php echo $_SESSION["user_id"]; ?>', '#content'); return false;"><?php echo $_SESSION["username"]; ?></a> on <?php echo date("F jS, Y"), " @ ", date("g:i A"); ?><br/>
+                                        by <a href="/" onClick="load('about=<?php echo $_SESSION["user_id"]; ?>', '#content'); return false;"><?php echo $_SESSION["username"]; ?></a> on <?php echo date("F jS Y") ?><br/>
                                     </div>
                                     <textarea class="content" name="content" maxlength="1024" placeholder="Content"></textarea><br/>
                                     <input type="submit" value="Save"/>
@@ -1735,7 +1735,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                             <input name="post_id" type="hidden" value="<?php echo $_GET["update_post"]; ?>"/>
                                             <input class="title" name="title" type="text" maxlength="128" value="<?php echo $row["title"]; ?>" placeholder="Title"><br/>
                                             <div style="text-align: left">
-                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS, Y", $date), " @ ", date("g:i A", $date); ?> <i>(updated on <?php echo date("F jS, Y"), " @ ", date("g:i A"); ?>)</i><br/>
+                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS Y", $date); ?> <i>(updated <?php echo date("F jS Y"); ?>)</i><br/>
                                             </div>
                                             <textarea class="content" name="content" maxlength="1024" placeholder="Content"><?php echo $row["content"]; ?></textarea>
                                             <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
@@ -1747,9 +1747,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                                 <?php echo $row["title"]; ?>
                                             </div>
                                             <div>
-                                                <?php echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS, Y", $date), " @ ", date("g:i A", $date); ?>
+                                                <?php echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS Y", $date); ?>
                                                 <?php if ($row["updated"]): ?>
-                                                    <?php echo "<i>(updated on ", date("F jS, Y", $date_updated), " @ ", date("g:i A", $date_updated), "</i>"; ?>
+                                                    <?php echo "<i>(updated ", date("F jS Y", $date_updated), ")</i>"; ?>
                                                 <?php endif; ?>
                                             </div>
                                             <div class="content">
