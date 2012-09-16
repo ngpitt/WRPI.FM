@@ -416,7 +416,7 @@ $_POST = sanitize($_POST);
 if (isset($_POST["delete_account"]) && isset($_POST["user_id"]) && isset($_SESSION["logged_in"])) {
 
     // Check for valid permissions
-    if ($_POST["user_id"] !== $_SESSION["user_id"] && $_SESSION["admin"]) {
+    if ($_SESSION["admin"] && ($_POST["user_id"] !== $_SESSION["user_id"])) {
 
         // Delete the account
         $_SERVER["database"]["mysqli"]->query("DELETE FROM users WHERE user_id = '{$_POST["user_id"]}'");
@@ -447,7 +447,7 @@ if (isset($_POST["delete_post"]) && isset($_POST["post_id"]) && isset($_SESSION[
     // Check for valid permissions
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE post_id = '{$_POST["post_id"]}'");
     $row = $result->fetch_assoc();
-    if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
+    if (!$row || ($row["user_id"] !== $_SESSION["user_id"])) {
         echo 1;
         return;
     }
@@ -526,16 +526,17 @@ if (isset($_POST["finish_registration"]) && isset($_POST["id"]) && isset($_SESSI
 // Process the login form
 if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"])) {
 
-    // Check the user's password hash
+    // Check for a valid email address
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
     $row = $result->fetch_assoc();
-    if ($row) {
-        $_POST["password"] = hash("sha256", $_POST["password"] . $row["user_id"]);
-        if ($_POST["password"] !== $row["password"]) {
-            echo 1;
-            return;
-        }
-    } else {
+    if (!$row) {
+        echo 1;
+        return;
+    }
+    
+    // Check the user's password
+    $_POST["password"] = hash("sha256", $_POST["password"] . $row["user_id"]);
+    if ($_POST["password"] !== $row["password"]) {
         echo 1;
         return;
     }
@@ -686,7 +687,8 @@ if (isset($_POST["start_password_reset"]) && isset($_POST["email"])) {
 
     // Check if the email address exists
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
-    if ($row = $result->fetch_assoc()) {
+    $row = $result->fetch_assoc();
+    if (!$row) {
         echo 1;
         return;
     }
@@ -805,7 +807,7 @@ if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST[
     // Check for username in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE username = '{$_POST["username"]}'");
     $row = $result->fetch_assoc();
-    if ($row && $row["user_id"] !== $_POST["user_id"]) {
+    if ($row && ($row["user_id"] !== $_POST["user_id"])) {
         echo 2;
         return;
     }
@@ -819,11 +821,10 @@ if (isset($_POST["update_account"]) && isset($_POST["user_id"]) && isset($_POST[
     // Check for email address in use
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users WHERE email = '{$_POST["email"]}'");
     $row = $result->fetch_assoc();
-    if ($row && $row["user_id"] !== $_POST["user_id"]) {
+    if ($row && ($row["user_id"] !== $_POST["user_id"])) {
         echo 4;
         return;
     }
-
 
     // Check for valid permissions
     if ($_SESSION["admin"]) {
@@ -881,7 +882,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
     // Check for valid permissions
     $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM posts WHERE post_id = '{$_POST["post_id"]}'");
     $row = $result->fetch_assoc();
-    if ($row && $row["user_id"] !== $_SESSION["user_id"]) {
+    if ($row && ($row["user_id"] !== $_SESSION["user_id"])) {
         echo 1;
         return;
     }
