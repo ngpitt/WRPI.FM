@@ -551,7 +551,7 @@ if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"]
     $_SESSION["subscribe"] = $row["subscribe"] ? true : false;
 
     // Update last login time
-    $_SERVER["database"]["mysqli"]->query("UPDATE users SET login_date = CURRENT_TIMESTAMP, login_ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
+    $_SERVER["database"]["mysqli"]->query("UPDATE users SET last_login_date = CURRENT_TIMESTAMP, last_login_ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
 
     echo 0;
     return;
@@ -1636,12 +1636,12 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                     <th>Edit</th>
                                     <th>Admin</th>
                                     <th>Subscribed</th>
-                                    <th>Login Date</th>
-                                    <th>Login IP</th>
+                                    <th>Last Login Date</th>
+                                    <th>Last Login IP</th>
                                 </tr>
                                 <?php if ($result): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
-                                        <?php $date = strtotime($row["login_date"]); ?>
+                                        <?php $date = strtotime($row["last_login_date"]); ?>
                                         <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#content');">
                                             <td><?php echo $row["username"]; ?></td>
                                             <td><?php echo $row["email"]; ?></td>
@@ -1649,7 +1649,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                             <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
                                             <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
                                             <td><?php echo date("F jS Y", $date); ?></td>
-                                            <td><?php echo $row["login_ip"]; ?></td>
+                                            <td><?php echo $row["last_login_ip"]; ?></td>
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php endif; ?>
