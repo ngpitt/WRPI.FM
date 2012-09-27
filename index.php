@@ -1522,10 +1522,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
             }
             table {
                 border-collapse: collapse;
-                width: 680px;
-            }
-            table td{
-                border-top: 1px solid #000000;
+                width: 660px;
             }
             textarea {
                 font-family: Tahoma, Sans-serif;
@@ -1617,7 +1614,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                         <input name="admin" type="checkbox" style="display: none;"/>
                                     <?php endif; ?>
                                     <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
-                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
+                                    <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="<?php echo $_SESSION["admin"] ? "load('admin', '#content')" : "load('search=' + search + '&amp;page=' + page, '#content');"; ?>"/>
                                     <input type="button" value="Delete" onClick="delete_account('<?php echo $row["user_id"]; ?>');"/>
                                 </form>
                             <?php else: ?>
@@ -1629,31 +1626,33 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                             <?php endif; ?>
                         <?php elseif (isset($_GET["admin"]) && isset($_SESSION["logged_in"]) && $_SESSION["admin"]): ?>
                             <?php $result = $_SERVER["database"]["mysqli"]->query("SELECT * FROM users"); ?>
-                            <table>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Edit</th>
-                                    <th>Admin</th>
-                                    <th>Subscribed</th>
-                                    <th>Last Login Date</th>
-                                    <th>Last Login IP</th>
-                                </tr>
-                                <?php if ($result): ?>
-                                    <?php while ($row = $result->fetch_assoc()): ?>
-                                        <?php $date = strtotime($row["last_login_date"]); ?>
-                                        <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#content');">
-                                            <td><?php echo $row["username"]; ?></td>
-                                            <td><?php echo $row["email"]; ?></td>
-                                            <td><?php echo $row["edit"] ? "&#10004;" : "&#10008;"; ?></td>
-                                            <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
-                                            <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
-                                            <td><?php echo date("F jS Y", $date); ?></td>
-                                            <td><?php echo $row["last_login_ip"]; ?></td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                <?php endif; ?>
-                            </table>
+                            <div class="post">
+                                <table>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Edit</th>
+                                        <th>Admin</th>
+                                        <th>Subscribed</th>
+                                        <th>Last Login Date</th>
+                                        <th>Last Login IP</th>
+                                    </tr>
+                                    <?php if ($result): ?>
+                                        <?php while ($row = $result->fetch_assoc()): ?>
+                                            <?php $date = strtotime($row["last_login_date"]); ?>
+                                            <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#content');">
+                                                <td><?php echo $row["username"]; ?></td>
+                                                <td><?php echo $row["email"]; ?></td>
+                                                <td><?php echo $row["edit"] ? "&#10004;" : "&#10008;"; ?></td>
+                                                <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
+                                                <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
+                                                <td><?php echo date("F jS Y", $date); ?></td>
+                                                <td><?php echo $row["last_login_ip"]; ?></td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    <?php endif; ?>
+                                </table>
+                            </div>
                         <?php elseif (isset($_GET["finish_password_reset"]) && isset($_SESSION["id"]) && isset($_SESSION["user_id"]) && isset($_SESSION["admin"]) && $_GET["finish_password_reset"] === $_SESSION["id"]): ?>
                             <form action="/" onSubmit="finish_password_reset(this); return false;">
                                 <input name="id" type="hidden" value="<?php echo $_GET["finish_password_reset"]; ?>"/>
