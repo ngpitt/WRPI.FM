@@ -403,6 +403,10 @@ $_SERVER["database"]["mysqli"] = new mysqli($_SERVER["database"]["host"], $_SERV
 // Set the default timezone
 date_default_timezone_set($_SERVER["site"]["timezone"]);
 
+// Set session expiration
+ini_set("session.cookie_lifetime", 60 * 60 * 24);
+ini_set("session.gc_maxlifetime", 60 * 60 * 24);
+
 // Start (or reopen) a PHP session
 session_start();
 
