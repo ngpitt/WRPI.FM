@@ -35,6 +35,7 @@ function bb2html($bb) {
             $token = strstr($token, "=", true);
         }
 
+        // Process the token
         switch ($token) {
             case "[b]":
                 $html .= "<b>";
