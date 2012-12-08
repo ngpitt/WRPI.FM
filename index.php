@@ -306,16 +306,18 @@ function bb2rss($bb) {
             case "[img]":
             case "[img":
             case "[img width":
-                $text .= "(image: ";
+                $text .= "(image)";
+                $omit = true;
                 break;
             case "[/img]":
-                $text .= ")";
+                $omit = false;
                 break;
             case "[youtube]":
-                $text .= "(YouTube viedo: ";
+                $text .= "(viedo)";
+                $omit = true;
                 break;
             case "[/youtube]":
-                $text .= ")";
+                $omit = false;
                 break;
             default:
                 if (!$omit) {
@@ -555,7 +557,7 @@ if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"]
     $_SESSION["admin"] = $row["admin"] ? true : false;
     $_SESSION["subscribe"] = $row["subscribe"] ? true : false;
 
-    // Update last login time
+    // Update the last login time and ip
     $_SERVER["database"]["mysqli"]->query("UPDATE users SET last_login_date = CURRENT_TIMESTAMP, last_login_ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
 
     echo 0;
