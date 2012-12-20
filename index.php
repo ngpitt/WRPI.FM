@@ -517,7 +517,7 @@ if (isset($_POST["finish_registration"]) && isset($_POST["id"]) && isset($_SESSI
     }
 
     // Create the account
-    $_SERVER["database"]["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', edit = {$_SESSION["edit"]}, admin = {$_SESSION["admin"]}, subscribe = {$_SESSION["subscribe"]}");
+    $_SERVER["database"]["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', edit = {$_SESSION["edit"]}, admin = {$_SESSION["admin"]}, subscribe = {$_SESSION["subscribe"]}, last_login = CURRENT_TIMESTAMP, last_ip = '{$_SERVER["REMOTE_ADDR"]}'");
 
     // Remove temporary session variables
     unset($_SESSION["id"]);
@@ -558,7 +558,7 @@ if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"]
     $_SESSION["subscribe"] = $row["subscribe"] ? true : false;
 
     // Update the last login time and ip
-    $_SERVER["database"]["mysqli"]->query("UPDATE users SET last_login_date = CURRENT_TIMESTAMP, last_login_ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
+    $_SERVER["database"]["mysqli"]->query("UPDATE users SET last_login = CURRENT_TIMESTAMP, last_ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
 
     echo 0;
     return;
@@ -1311,9 +1311,9 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                         username: form.username.value, 
                         password: form.password.value, 
                         email: form.email.value,
-                        subscribe: form.subscribe.checked ? 1 : 0,
-                        edit: form.edit.checked ? 1 : 0,
-                        admin: form.admin.checked ? 1 : 0,
+                        subscribe: form.subscribe.value,
+                        edit: form.edit.value,
+                        admin: form.admin.value,
                         about: form.about.value
                     }, function (result) {
                         
@@ -1612,14 +1612,38 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                     <input class="textbox" name="email" type="email" maxlength="64" value="<?php echo $row["email"]; ?>" placeholder="Email"/><br/>
                                     <input class="textbox" name="password" type="password" maxlength="128" placeholder="Password" autocomplete="off"/><br/>
                                     <input class="textbox" name="confirmation" type="password" maxlength="128" placeholder="Password (confirmation)" autocomplete="off"/><br/>
-                                    Subscribe: <input name="subscribe" type="checkbox" <?php echo $row["subscribe"] ? "checked" : ""; ?>/>
                                     <?php if ($_SESSION["admin"]): ?>
-                                        Edit: <input name="edit" type="checkbox" <?php echo $row["edit"] ? "checked" : ""; ?>/>
-                                        Admin: <input name="admin" type="checkbox" <?php echo $row["admin"] ? "checked" : ""; ?>/>
+                                        Edit: <select name="edit">
+                                            <?php if ($row["edit"]): ?>
+                                                <option value="1">yes</option>
+                                                <option value="0">no</option>
+                                            <?php else: ?>
+                                                <option value="0">no</option>
+                                                <option value="1">yes</option>
+                                            <?php endif; ?>
+                                        </select>
+                                        Admin: <select name="admin">
+                                            <?php if ($row["admin"]): ?>
+                                                <option value="1">yes</option>
+                                                <option value="0">no</option>
+                                            <?php else: ?>
+                                                <option value="0">no</option>
+                                                <option value="1">yes</option>
+                                            <?php endif; ?>
+                                        </select>
                                     <?php else: ?>
-                                        <input name="edit" type="checkbox" style="display: none;"/>
-                                        <input name="admin" type="checkbox" style="display: none;"/>
+                                        <select name="edit" value="0" style="display: none;"/>
+                                        <select name="admin" value="0" style="display: none;"/>
                                     <?php endif; ?>
+                                    Subscribed: <select name="subscribe">
+                                        <?php if ($row["subscribe"]): ?>
+                                            <option value="1">yes</option>
+                                            <option value="0">no</option>
+                                        <?php else: ?>
+                                            <option value="0">no</option>
+                                            <option value="1">yes</option>
+                                        <?php endif; ?>
+                                    </select>
                                     <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
                                     <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="<?php echo $_SESSION["admin"] ? "load('admin', '#content')" : "load('search=' + search + '&amp;page=' + page, '#content');"; ?>"/>
                                     <input type="button" value="Delete" onClick="delete_account('<?php echo $row["user_id"]; ?>');"/>
@@ -1641,20 +1665,20 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                         <th>Edit</th>
                                         <th>Admin</th>
                                         <th>Subscribed</th>
-                                        <th>Last Login Date</th>
-                                        <th>Last Login IP</th>
+                                        <th>Last Login</th>
+                                        <th>Last IP</th>
                                     </tr>
                                     <?php if ($result): ?>
                                         <?php while ($row = $result->fetch_assoc()): ?>
-                                            <?php $date = strtotime($row["last_login_date"]); ?>
+                                            <?php $date = strtotime($row["last_login"]); ?>
                                             <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#content');">
                                                 <td><?php echo $row["username"]; ?></td>
                                                 <td><?php echo $row["email"]; ?></td>
-                                                <td><?php echo $row["edit"] ? "&#10004;" : "&#10008;"; ?></td>
-                                                <td><?php echo $row["admin"] ? "&#10004;" : "&#10008;"; ?></td>
-                                                <td><?php echo $row["subscribe"] ? "&#10004;" : "&#10008;"; ?></td>
+                                                <td><?php echo $row["edit"] ? "yes" : "no"; ?></td>
+                                                <td><?php echo $row["admin"] ? "yes" : "no"; ?></td>
+                                                <td><?php echo $row["subscribe"] ? "yes" : "no"; ?></td>
                                                 <td><?php echo date("F jS Y", $date); ?></td>
-                                                <td><?php echo $row["last_login_ip"]; ?></td>
+                                                <td><?php echo $row["last_ip"]; ?></td>
                                             </tr>
                                         <?php endwhile; ?>
                                     <?php endif; ?>
