@@ -1644,7 +1644,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                             <option value="1">yes</option>
                                         <?php endif; ?>
                                     </select>
-                                    <br/><textarea name="about" maxlength="1024" placeholder="About"><?php echo $row["about"]; ?></textarea>
+                                    <br/><textarea name="about" maxlength="4096" placeholder="About"><?php echo $row["about"]; ?></textarea>
                                     <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="<?php echo $_SESSION["admin"] ? "load('admin', '#content')" : "load('search=' + search + '&amp;page=' + page, '#content');"; ?>"/>
                                     <input type="button" value="Delete" onClick="delete_account('<?php echo $row["user_id"]; ?>');"/>
                                 </form>
@@ -1723,7 +1723,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                     <div style="text-align: left">
                                         by <a href="/" onClick="load('about=<?php echo $_SESSION["user_id"]; ?>', '#content'); return false;"><?php echo $_SESSION["username"]; ?></a> on <?php echo date("F jS Y") ?><br/>
                                     </div>
-                                    <textarea class="content" name="content" maxlength="1024" placeholder="Content"></textarea><br/>
+                                    <textarea class="content" name="content" maxlength="4096" placeholder="Content"></textarea><br/>
                                     <input type="submit" value="Save"/>
                                     <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
                                 </form>
@@ -1773,7 +1773,7 @@ if (isset($_POST["update_post"]) && isset($_POST["post_id"]) && isset($_POST["ti
                                             <div style="text-align: left">
                                                 by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS Y", $date); ?> <i>(updated <?php echo date("F jS Y"); ?>)</i><br/>
                                             </div>
-                                            <textarea class="content" name="content" maxlength="1024" placeholder="Content"><?php echo $row["content"]; ?></textarea>
+                                            <textarea class="content" name="content" maxlength="4096" placeholder="Content"><?php echo $row["content"]; ?></textarea>
                                             <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
                                             <input type="button" value="Delete" onClick="delete_post('<?php echo $row["post_id"]; ?>');"/>
                                         </form>
