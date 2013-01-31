@@ -17,31 +17,30 @@
 
 // Site configuration
 $_SERVER["site"] = array(
-    "title"         => "WRPI.FM",
-    "description"   => "WRPI Troy 91.5 fm",
-    "timezone"      => "America/New_York",
+    "title" => "WRPI.FM",
+    "description" => "WRPI Troy 91.5 fm",
+    "timezone" => "America/New_York",
 );
 
 // Database configuration
 $_SERVER["database"] = array(
-    "host"  => "localhost",
-    "user"  => "wrpi_fm",
-    "pass"  => "wrpi_fm",
-    "name"  => "wrpi_fm",
+    "host" => "localhost",
+    "user" => "wrpi_fm",
+    "pass" => "wrpi_fm",
+    "name" => "wrpi_fm",
 );
 
 // Stylistic configuration
 $_SERVER["style"] = array(
-    "background_color"          => "#626262",
-    "foreground_color"          => "#ffffff",
-    "highlight_color"           => "#f0f0f0",
-    "title_background_color"    => "#1e1e1e",
-    "button_background_color"   => "#000000",
-    "font_color"                => "#000000",
-    "active_button_color"       => "#ffffff",
-    "inactive_button_color"     => "#626262",
-    "link_color"                => "#ff0000",
-    "copyright_color"           => "#ffffff",
+    "background_color" => "#626262",
+    "foreground_color" => "#ffffff",
+    "highlight_color" => "#f0f0f0",
+    "title_background_color" => "#1e1e1e",
+    "button_background_color" => "#000000",
+    "font_color" => "#000000",
+    "active_button_color" => "#ffffff",
+    "inactive_button_color" => "#626262",
+    "link_color" => "#ff0000",
+    "copyright_color" => "#ffffff",
 );
-
 ?>
