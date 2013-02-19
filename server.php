@@ -101,7 +101,7 @@ if (isset($_POST["finish_password_reset"]) && isset($_POST["id"]) && isset($_POS
     $_POST["password"] = hash("sha256", $_POST["password"] . $_SESSION["user_id"]);
 
     // Update the account
-    $_SERVER["mysqli"]->query("UPDATE users SET password = '{$_POST["password"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
+    $_SERVER["mysqli"]->query("UPDATE users SET password = '{$_POST["password"]}', login_date = CURRENT_TIMESTAMP, login_ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
 
     // Remove temporary session variables
     unset($_SESSION["id"]);
@@ -132,7 +132,7 @@ if (isset($_POST["finish_registration"]) && isset($_POST["id"]) && isset($_SESSI
         exit("3");
 
     // Create the account
-    $_SERVER["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', edit = {$_SESSION["edit"]}, admin = {$_SESSION["admin"]}, subscribe = {$_SESSION["subscribe"]}, date = CURRENT_TIMESTAMP, ip = '{$_SERVER["REMOTE_ADDR"]}'");
+    $_SERVER["mysqli"]->query("INSERT INTO users SET user_id = '{$_SESSION["user_id"]}', username = '{$_SESSION["username"]}', password = '{$_SESSION["password"]}', email = '{$_SESSION["email"]}', edit = {$_SESSION["edit"]}, admin = {$_SESSION["admin"]}, subscribe = {$_SESSION["subscribe"]}, login_date = CURRENT_TIMESTAMP, login_ip = '{$_SERVER["REMOTE_ADDR"]}'");
 
     // Remove temporary session variables
     unset($_SESSION["id"]);
@@ -168,7 +168,7 @@ if (isset($_POST["login"]) && isset($_POST["email"]) && isset($_POST["password"]
     $_SESSION["subscribe"] = $row["subscribe"] ? true : false;
 
     // Update the last login time and ip
-    $_SERVER["mysqli"]->query("UPDATE users SET date = CURRENT_TIMESTAMP, ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
+    $_SERVER["mysqli"]->query("UPDATE users SET login_date = CURRENT_TIMESTAMP, login_ip = '{$_SERVER["REMOTE_ADDR"]}' WHERE user_id = '{$_SESSION["user_id"]}'");
 
     exit("0");
 }
@@ -187,17 +187,17 @@ if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content
 
     // Create the new post
     $post_id = uniqid();
-    $_SERVER["mysqli"]->query("INSERT INTO posts SET post_id = '{$post_id}', user_id = '{$_SESSION["user_id"]}', date = CURRENT_TIMESTAMP, title = '{$_POST["title"]}', content = '{$_POST["content"]}'");
+    $_SERVER["mysqli"]->query("INSERT INTO posts SET post_id = '{$post_id}', user_id = '{$_SESSION["user_id"]}', date_created = CURRENT_TIMESTAMP, title = '{$_POST["title"]}', content = '{$_POST["content"]}'");
 
     // Get the post
     $result = $_SERVER["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE posts.post_id = '{$post_id}'");
     $row = $result->fetch_assoc();
-    $date = strtotime($row["date"]);
+    $date_created = strtotime($row["date_created"]);
 
     // Create the new post email
     $headers = "From: {$_SERVER["site"]["title"]} <do-not-reply@{$_SERVER["site"]["domain"]}>\r\nMIME-Version: 1.0\r\nContent-type: text/html; charset=utf-8\r\n";
     $subject = $row["title"];
-    $date = date("F jS Y", $date);
+    $date_created = date("F jS Y", $date_created);
 
     // Convert BB formatting to HTML formatting
     $row["content"] = bb2html($row["content"]);
@@ -212,7 +212,7 @@ if (isset($_POST["new_post"]) && isset($_POST["title"]) && isset($_POST["content
                     {$row["title"]}
                 </div>
                 <div>
-                    by <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$_SERVER["site"]["url"]}#about={$_SESSION["user_id"]}\">{$row["username"]}</a> on {$date}
+                    by <a style=\"color: {$_SERVER["style"]["link_color"]};\" href=\"{$_SERVER["site"]["url"]}#about={$_SESSION["user_id"]}\">{$row["username"]}</a> on {$date_created}
                 </div>
                 <div style=\"margin-top: 10px;\">
                     {$row["content"]}
@@ -257,9 +257,9 @@ if (isset($_GET["rss"])) {
 
     // Load the most recent 5 posts
     if ($user_specific)
-        $result = $_SERVER["mysqli"]->query("SELECT * FROM posts WHERE user_id = '{$_GET["rss"]}' ORDER BY date DESC LIMIT 5");
+        $result = $_SERVER["mysqli"]->query("SELECT * FROM posts WHERE user_id = '{$_GET["rss"]}' ORDER BY date_created DESC LIMIT 5");
     else
-        $result = $_SERVER["mysqli"]->query("SELECT * FROM posts ORDER BY date DESC LIMIT 5");
+        $result = $_SERVER["mysqli"]->query("SELECT * FROM posts ORDER BY date_created DESC LIMIT 5");
     $row = $result->fetch_assoc();
 
     // Get the last build date from the most recent post
@@ -284,7 +284,7 @@ if (isset($_GET["rss"])) {
             <description>", $row["content"], "</description>
             <link>", $_SERVER["site"]["url"], "#search=", $row["post_id"], "&amp;page=1</link>
             <guid>", $_SERVER["site"]["url"], "#search=", $row["post_id"], "&amp;page=1</guid>
-            <pubDate>", date("D, d M Y H:i:s T", strtotime($row["date"])), "</pubDate>
+            <pubDate>", date("D, d M Y H:i:s T", strtotime($row["date_created"])), "</pubDate>
         </item>";
     } while ($row = $result->fetch_assoc());
     echo "\n    </channel>

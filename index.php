@@ -285,15 +285,15 @@ require_once "server.php";
                                     </tr>
                                     <?php if ($result): ?>
                                         <?php while ($row = $result->fetch_assoc()): ?>
-                                            <?php $date = strtotime($row["date"]); ?>
+                                            <?php $login_date = strtotime($row["login_date"]); ?>
                                             <tr class="highlight" onClick="load('account=<?php echo $row["user_id"]; ?>', '#content');">
                                                 <td><?php echo $row["username"]; ?></td>
                                                 <td><?php echo $row["email"]; ?></td>
                                                 <td><?php echo $row["edit"] ? "yes" : "no"; ?></td>
                                                 <td><?php echo $row["admin"] ? "yes" : "no"; ?></td>
                                                 <td><?php echo $row["subscribe"] ? "yes" : "no"; ?></td>
-                                                <td><?php echo date("F jS Y", $date); ?></td>
-                                                <td><?php echo $row["ip"]; ?></td>
+                                                <td><?php echo date("F jS Y", $login_date); ?></td>
+                                                <td><?php echo $row["login_ip"]; ?></td>
                                             </tr>
                                         <?php endwhile; ?>
                                     <?php endif; ?>
@@ -353,7 +353,7 @@ require_once "server.php";
 
                             // Load the page
                             $limit = ($_SERVER["page"] - 1) * 5;
-                            $result = $_SERVER["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY posts.date DESC LIMIT {$limit}, 50");
+                            $result = $_SERVER["mysqli"]->query("SELECT * FROM posts INNER JOIN users ON posts.user_id = users.user_id WHERE users.username LIKE '%{$search}%' OR posts.post_id LIKE '{$search}' OR posts.date_created LIKE '%{$search}%' OR posts.date_updated LIKE '%{$search}%' OR posts.title LIKE '%{$search}%' OR posts.content LIKE '%{$search}%' ORDER BY posts.date_created DESC LIMIT {$limit}, 50");
                             $row = $result->fetch_assoc();
 
                             // Determine how many page tabs to show
@@ -377,14 +377,14 @@ require_once "server.php";
                                 <?php endif; ?>
                             <?php else: ?>
                                 <?php for ($i = 0; $row && $i < 5; $i++): ?>
-                                    <?php $date = strtotime($row["date"]); ?>
+                                    <?php $date_created = strtotime($row["date_created"]); ?>
                                     <?php $date_updated = strtotime($row["date_updated"]); ?>
                                     <?php if (isset($_GET["update_post"]) && $_GET["update_post"] === $row["post_id"] && isset($_SESSION["logged_in"]) && ($row["user_id"] === $_SESSION["user_id"] || $_SESSION["admin"])): ?>
                                         <form action="/" onSubmit="update_post(this); return false;">
                                             <input name="post_id" type="hidden" value="<?php echo $_GET["update_post"]; ?>"/>
                                             <input class="title" name="title" type="text" maxlength="128" value="<?php echo $row["title"]; ?>" placeholder="Title"><br/>
                                             <div style="text-align: left">
-                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS Y", $date); ?> <i>(updated <?php echo date("F jS Y"); ?>)</i><br/>
+                                                by <a href="/" onClick="load('about=<?php echo $row["user_id"]; ?>', '#content'); return false;"><?php echo $row["username"]; ?></a> on <?php echo date("F jS Y", $date_created); ?> <i>(updated <?php echo date("F jS Y"); ?>)</i><br/>
                                             </div>
                                             <textarea class="content" name="content" maxlength="4096" placeholder="Content"><?php echo $row["content"]; ?></textarea>
                                             <input type="submit" value="Save"/> <input type="button" value="Cancel" onClick="load('search=' + search + '&amp;page=' + page, '#content');"/>
@@ -396,7 +396,7 @@ require_once "server.php";
                                                 <?php echo $row["title"]; ?>
                                             </div>
                                             <div>
-                                                <?php echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS Y", $date); ?>
+                                                <?php echo "by <a href=\"/\" onClick=\"load('about=", $row["user_id"], "', '#content'); return false;\">", $row["username"], "</a> on ", date("F jS Y", $date_created); ?>
                                                 <?php if ($row["updated"]): ?>
                                                     <?php echo "<i>(updated ", date("F jS Y", $date_updated), ")</i>"; ?>
                                                 <?php endif; ?>
